@@ -1,1 +1,145 @@
-hi
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Anvika Ji 🌼</title>
+    <!-- Google Fonts for cute typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating background elements */
+        .bg-element {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: float 6s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        .bg-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .bg-2 { top: 20%; right: 15%; animation-delay: 1.5s; }
+        .bg-3 { bottom: 15%; left: 15%; animation-delay: 3s; }
+        .bg-4 { bottom: 10%; right: 10%; animation-delay: 4.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        /* Cute Card Design */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 25px;
+            padding: 40px 25px;
+            width: 85%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(238, 156, 167, 0.4);
+            position: relative;
+            z-index: 10;
+            animation: popIn 0.8s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .please-msg {
+            font-size: 1.1rem;
+            color: #e91e63;
+            font-weight: 600;
+            margin-top: 20px;
+            display: inline-block;
+            background: #ffe4e8;
+            padding: 8px 22px;
+            border-radius: 20px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+
+        /* Decorative Sparkle Icon */
+        .top-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* Main Message Styling */
+        .message {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #d81b60;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        /* Signature Styling */
+        .signature {
+            font-family: 'Caveat', cursive;
+            font-size: 2.3rem;
+            color: #8e24aa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .flower {
+            display: inline-block;
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cute Floating BG Icons -->
+    <div class="bg-element bg-1">✨</div>
+    <div class="bg-element bg-2">💖</div>
+    <div class="bg-element bg-3">🌸</div>
+    <div class="bg-element bg-4">✨</div>
+
+    <!-- Main Card -->
+    <div class="card">
+        <div class="top-icon">💌</div>
+        <div class="message">Ab Bata Bhi Do...</div>
+        <div class="signature">
+            ~ Cute Anvika ji <span class="flower">🌼</span>
+        </div>
+        <div>
+            <div class="please-msg">Please 🙂</div>
+        </div>
+    </div>
+
+</body>
+  </html>
+  
