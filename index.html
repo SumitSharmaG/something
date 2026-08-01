@@ -118,9 +118,97 @@
         @keyframes spin {
             100% { transform: rotate(360deg); }
         }
+
+        /* Popup Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 20px;
+            border-radius: 25px;
+            text-align: center;
+            width: 85%;
+            max-width: 320px;
+            box-shadow: 0 15px 35px rgba(238, 156, 167, 0.4);
+            border: 2px solid #ffffff;
+            animation: popIn 0.5s ease-out;
+        }
+
+        .modal-card h2 {
+            color: #d81b60;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .modal-card p {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-card input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #ffdde1;
+            border-radius: 15px;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.95rem;
+            background: #fffafa;
+        }
+
+        .modal-card input:focus {
+            border-color: #ee9ca7;
+        }
+
+        .modal-card button {
+            background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%);
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            color: #d81b60;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(238, 156, 167, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .modal-card button:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
+
+    <!-- Background Audio Element -->
+    <audio id="bgAudio" src="audio1.mp3" loop></audio>
+
+    <!-- Entry Pop-up Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Welcome! 💖</h2>
+            <p>Apna Name To Batao 🙂</p>
+            <input type="text" id="nameInput" placeholder="Your Name🌷Cutey...?">
+            <br>
+            <button id="enterBtn">Enter ✨</button>
+        </div>
+    </div>
 
     <!-- Cute Floating BG Icons -->
     <div class="bg-element bg-1">✨</div>
@@ -133,13 +221,33 @@
         <div class="top-icon">💌</div>
         <div class="message">Ab Bata Bhi Do...</div>
         <div class="signature">
-            ~ Cute Anvika ji <span class="flower">🌼</span>
+            ~Anvika ji <span class="flower">🌼</span>
         </div>
         <div>
             <div class="please-msg">Please 🙂</div>
         </div>
     </div>
 
+    <!-- JavaScript to handle modal click & audio trigger -->
+    <script>
+        const enterBtn = document.getElementById('enterBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const bgAudio = document.getElementById('bgAudio');
+
+        enterBtn.addEventListener('click', () => {
+            // Play the background audio
+            bgAudio.play().catch(error => {
+                console.log("Audio autoplay restricted or missing file:", error);
+            });
+
+            // Smoothly hide the modal
+            modalOverlay.style.opacity = '0';
+            setTimeout(() => {
+                modalOverlay.style.display = 'none';
+            }, 500);
+        });
+    </script>
+
 </body>
-  </html>
-  
+            </html>
+            
