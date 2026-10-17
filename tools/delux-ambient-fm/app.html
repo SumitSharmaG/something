@@ -1,10 +1,293 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Delux Ambient FM starter workspace | Sumit Sharma Tools</title><meta name="description" content="Nonfunctional starter workspace for Delux Ambient FM; explains the implementation still required.">
-<link rel="canonical" href="https://thesumitsharma.in/tools/delux-ambient-fm/app.html"><meta property="og:type" content="website"><meta property="og:title" content="Delux Ambient FM starter workspace | Sumit Sharma Tools"><meta property="og:description" content="Nonfunctional starter workspace for Delux Ambient FM; explains the implementation still required."><meta property="og:url" content="https://thesumitsharma.in/tools/delux-ambient-fm/app.html">
-<meta name="theme-color" content="#f7f5ef"><link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg"><link rel="stylesheet" href="../../assets/site.css"><script defer src="../../assets/site.js"></script></head>
-<body><a class="skip-link" href="#main">Skip to content</a>
-<header class="topbar"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
-<nav class="nav" id="primary-nav" aria-label="Main navigation"><a href="../../index.html#tools">Tools</a><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></nav></header>
-<main class="content-shell workspace-shell" id="main"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>Delux Ambient FM</span></nav><section class="workspace-heading"><p class="kicker">STARTER WORKSPACE / NOT FUNCTIONAL</p><h1>Delux Ambient FM</h1><p class="article-lead">This is a nonfunctional starter page. It has no working delux ambient fm controls, processing, audio, game loop or saved state.</p><a class="subtle-link" href="./">Read the project guide ←</a></section><section class="placeholder-panel" aria-label="Nonfunctional workspace placeholder"><div class="placeholder-top"><span>WORKSPACE PREVIEW</span><span class="status-tag">NOT IMPLEMENTED</span></div><div class="placeholder-art"><span class="placeholder-symbol">FM</span><div><strong>Work in progress</strong><p>This area intentionally contains no pretend interactive controls.</p></div></div><div class="placeholder-foot">Starter shell · No data submitted · No tool functionality</div></section><section class="build-notes"><div><p class="kicker">Next implementation</p><h2>What a complete version still needs</h2></div><ul><li>A future version needs an authorised, reliable audio stream or properly licensed tracks, a modern browser and user-initiated playback</li><li>Accessible states, meaningful error handling and mobile interaction.</li></ul></section></main><footer class="footer"><div class="footer-main"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><p>A maker's shelf of practical tools, learning and experiments.</p></div><nav class="footer-nav" aria-label="Legal and information"><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a href="../../privacy-policy.html">Privacy</a><a href="../../terms.html">Terms</a><a href="../../disclaimer.html">Disclaimer</a></nav><small>© 2026 Sumit Sharma · Independent projects</small></footer>
-</body></html>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Deluxe Narak — an ambient street radio</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@700;800;900&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            devanagari: ['"Anek Devanagari"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            cream: '#f8f4e9',
+            sand: '#e8dbca',
+            live: '#22c55e',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .narak-backdrop {
+      background-image: url('https://images.unsplash.com/photo-1699414149180-3fafc7bfe901?q=80&w=868&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D839?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .saloon-vignette {
+      background: radial-gradient(circle at center, rgba(15, 7, 7, 0.2) 0%, rgba(10, 4, 4, 0.88) 100%);
+    }
+
+    .saloon-glass {
+      background: rgba(28, 16, 16, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(248, 244, 233, 0.15);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    }
+
+    .saloon-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: rgba(232, 219, 202, 0.9);
+      background: rgba(25, 12, 12, 0.5);
+      border: 1px solid rgba(248, 244, 233, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    #yt-screen {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      width: 200px;
+      height: 200px;
+      opacity: 0.01;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="bg-[#120808] text-cream min-h-screen flex flex-col justify-between select-none overflow-x-hidden font-sans">
+
+  <!-- FIRST-TOUCH OVERLAY -->
+  <div id="start-overlay" onclick="startRadioExperience()" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md cursor-pointer transition-opacity duration-500">
+    <div class="saloon-glass p-6 rounded-3xl text-center max-w-xs border border-white/20 shadow-2xl animate-pulse">
+      <p class="font-devanagari text-2xl font-bold text-cream mb-1">डीलक्स नरक रेडियो</p>
+      <p class="text-xs font-mono text-sand/70 mb-4 uppercase tracking-widest">Ambient street sound</p>
+      <button class="bg-cream text-black px-6 py-2.5 rounded-full font-semibold text-xs tracking-wider uppercase shadow-lg hover:scale-105 active:scale-95 transition-all">
+        ▶ Tune In Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Background Layer -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute inset-0 narak-backdrop"></div>
+    <div class="absolute inset-0 saloon-vignette"></div>
+  </div>
+
+  <!-- Hidden Player Container -->
+  <div id="yt-screen">
+    <div id="player"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="relative z-20 flex items-center justify-between px-5 pt-5 sm:px-8 sm:pt-6">
+    <span class="font-mono text-xs tracking-[0.25em] text-sand/60 uppercase">NARAK FM</span>
+
+    <div class="flex items-center gap-2 saloon-chip px-3 py-1.5">
+      <span class="relative flex size-2">
+        <span class="absolute inline-flex size-full animate-ping rounded-full bg-live opacity-75"></span>
+        <span class="relative inline-flex size-2 rounded-full bg-live"></span>
+      </span>
+      <span id="listener-count" class="font-semibold tabular-nums text-cream text-xs">34</span>
+      <span class="text-sand/70 text-xs">listening</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <a href="https://open.spotify.com" target="_blank" class="saloon-chip">
+        <svg class="size-3.5 text-[#1ED760]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.12-.899-.48-.12-.421.12-.78.479-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.362 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        <span class="hidden sm:inline">Spotify</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Center Title Section -->
+  <main class="relative z-10 flex flex-col items-center justify-center text-center px-4 my-auto py-12">
+    <h1 class="font-devanagari text-6xl sm:text-8xl lg:text-9xl font-black leading-[0.9] text-cream drop-shadow-[0_8px_30px_rgba(0,0,0,0.85)]">
+      <span class="block tracking-tight text-cream">डीलक्स</span>
+      <span class="block tracking-tight text-[#ff4c4c] drop-shadow-[0_0_25px_rgba(255,76,76,0.3)]">नरक</span>
+    </h1>
+    <p class="mt-4 font-mono text-[0.65rem] sm:text-xs tracking-[0.45em] text-sand/80 uppercase">
+      Deluxe Narak · Open All Hours · Feel Like A Devil ·
+    </p>
+  </main>
+
+  <!-- Bottom Player Container -->
+  <footer class="relative z-30 w-full max-w-xl mx-auto px-4 pb-8 sm:pb-12">
+    <div class="saloon-glass rounded-full p-2.5 sm:p-3 pr-4 sm:pr-6 flex items-center gap-3 sm:gap-4">
+      
+      <img id="track-art" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=120" alt="Cover" class="size-12 sm:size-14 rounded-full object-cover border border-white/20 shadow-md transition-all duration-300">
+
+      <div class="min-w-0 flex-1">
+        <p id="track-title" class="truncate text-sm sm:text-base font-semibold text-cream">
+          Tuning in...
+        </p>
+        <p id="track-sub" class="truncate text-xs font-mono text-sand/60">
+          Radio Ready
+        </p>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-2">
+        <button onclick="prevTrack()" class="p-2 text-sand hover:text-white transition-colors" aria-label="Previous">
+          <svg class="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        </button>
+
+        <button id="play-btn" onclick="togglePlay()" class="size-11 sm:size-12 rounded-full bg-cream text-black flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all" aria-label="Play">
+          <svg id="play-svg" class="size-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="pause-svg" class="size-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+
+        <button onclick="nextTrack()" class="p-2 text-sand hover:text-white transition-colors" aria-label="Next">
+          <svg class="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="m6 18 8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    /* ========================================================================
+       👉 अपनी YouTube Playlist ID यहाँ डालें (list= के बाद वाला कोड)
+       ======================================================================== */
+    const YOUTUBE_PLAYLIST_ID = 'PL1gfuz7ZYcaM2Z7sCGOWORCF0CGmonzOv'; 
+
+    let player = null;
+    let isPlaying = false;
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '200',
+        width: '200',
+        playerVars: {
+          listType: 'playlist',
+          list: YOUTUBE_PLAYLIST_ID, // सीधे प्लेलिस्ट लोड होगी
+          autoplay: 0,
+          controls: 0,
+          playsinline: 1,
+          rel: 0,
+          enablejsapi: 1
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange,
+          'onError': onPlayerError
+        }
+      });
+    }
+
+    function onPlayerReady() {
+      document.getElementById('track-title').innerText = "Deluxe Narak Radio";
+      document.getElementById('track-sub').innerText = "Playlist ready · Tap to listen";
+    }
+
+    function startRadioExperience() {
+      const overlay = document.getElementById('start-overlay');
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.remove(), 500);
+
+      if (player && typeof player.playVideo === 'function') {
+        player.playVideo();
+      } else {
+        setTimeout(() => {
+          if (player && typeof player.playVideo === 'function') {
+            player.playVideo();
+          }
+        }, 1000);
+      }
+    }
+
+    function togglePlay() {
+      if (!player || typeof player.playVideo !== 'function') return;
+
+      if (!isPlaying) {
+        player.playVideo();
+      } else {
+        player.pauseVideo();
+      }
+    }
+
+    function nextTrack() {
+      if (player && typeof player.nextVideo === 'function') {
+        player.nextVideo();
+      }
+    }
+
+    function prevTrack() {
+      if (player && typeof player.previousVideo === 'function') {
+        player.previousVideo();
+      }
+    }
+
+    function setPlayState(playing) {
+      isPlaying = playing;
+      const playSvg = document.getElementById('play-svg');
+      const pauseSvg = document.getElementById('pause-svg');
+      if (playing) {
+        playSvg.classList.add('hidden');
+        pauseSvg.classList.remove('hidden');
+        document.getElementById('track-sub').innerText = "Streaming live...";
+      } else {
+        playSvg.classList.remove('hidden');
+        pauseSvg.classList.add('hidden');
+        document.getElementById('track-sub').innerText = "Paused";
+      }
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        setPlayState(true);
+        const data = player.getVideoData();
+        if (data && data.title) {
+          document.getElementById('track-title').innerText = data.title;
+          document.getElementById('track-sub').innerText = data.author || "Deluxe Narak";
+        }
+        if (data && data.video_id) {
+          document.getElementById('track-art').src = `https://i.ytimg.com/vi/${data.video_id}/hqdefault.jpg`;
+        }
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        setPlayState(false);
+      } else if (event.data === YT.PlayerState.ENDED) {
+        nextTrack();
+      }
+    }
+
+    // अगर कोई गाना ब्लॉक हो तो बिना अटके ऑटोमैटिक अगला गाना प्ले हो जाए
+    function onPlayerError(e) {
+      document.getElementById('track-sub').innerText = "Skipping unplayable track...";
+      setTimeout(nextTrack, 500);
+    }
+
+    // लिसनर काउंटर
+    let count = 34;
+    setInterval(() => {
+      count += Math.floor(Math.random() * 3) - 1;
+      count = Math.max(15, count);
+      document.getElementById('listener-count').innerText = count;
+    }, 4500);
+  </script>
+</body>
+  </html>
+        
