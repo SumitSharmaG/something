@@ -1,10 +1,463 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Live Text Projector starter workspace | Sumit Sharma Tools</title><meta name="description" content="Nonfunctional starter workspace for Live Text Projector; explains the implementation still required.">
-<link rel="canonical" href="https://thesumitsharma.in/tools/live-text-projector/app.html"><meta property="og:type" content="website"><meta property="og:title" content="Live Text Projector starter workspace | Sumit Sharma Tools"><meta property="og:description" content="Nonfunctional starter workspace for Live Text Projector; explains the implementation still required."><meta property="og:url" content="https://thesumitsharma.in/tools/live-text-projector/app.html">
-<meta name="theme-color" content="#f7f5ef"><link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg"><link rel="stylesheet" href="../../assets/site.css"><script defer src="../../assets/site.js"></script></head>
-<body><a class="skip-link" href="https://www.thesumitsharma.in/clipboard/">hh</a>
-<header class="topbar"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
-<nav class="nav" id="primary-nav" aria-label="Main navigation"><a href="../../index.html#tools">Tools</a><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></nav></header>
-<main class="content-shell workspace-shell" id="main"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>Live Text Projector</span></nav><section class="workspace-heading"><p class="kicker">STARTER WORKSPACE / NOT FUNCTIONAL</p><h1>Live Text Projector</h1><p class="article-lead">This is a nonfunctional starter page. It has no working live text projector controls, processing, audio, game loop or saved state.</p><a class="subtle-link" href="./">Read the project guide ←</a></section><section class="placeholder-panel" aria-label="Nonfunctional workspace placeholder"><div class="placeholder-top"><span>WORKSPACE PREVIEW</span><span class="status-tag">NOT IMPLEMENTED</span></div><div class="placeholder-art"><span class="placeholder-symbol">Aa</span><div><strong>Work in progress</strong><p>This area intentionally contains no pretend interactive controls.</p></div></div><div class="placeholder-foot">Starter shell · No data submitted · No tool functionality</div></section><section class="build-notes"><div><p class="kicker">Next implementation</p><h2>What a complete version still needs</h2></div><ul><li>A modern browser and a screen or projector connected to your device</li><li>The planned workspace would need fullscreen permission and accessible keyboard controls</li><li>Accessible states, meaningful error handling and mobile interaction.</li></ul></section></main><footer class="footer"><div class="footer-main"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><p>A maker's shelf of practical tools, learning and experiments.</p></div><nav class="footer-nav" aria-label="Legal and information"><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a href="../../privacy-policy.html">Privacy</a><a href="../../terms.html">Terms</a><a href="../../disclaimer.html">Disclaimer</a></nav><small>© 2026 Sumit Sharma · Independent projects</small></footer>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Live Text Projector | Sumit Sharma Tools</title>
+  <meta name="description" content="Real-Time Text Transfer and Projector Workspace.">
+  <link rel="canonical" href="https://thesumitsharma.in/tools/live-text-projector/app.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Live Text Projector | Sumit Sharma Tools">
+  <meta property="og:description" content="Real-Time Text Transfer and Projector Workspace.">
+  <meta property="og:url" content="https://thesumitsharma.in/tools/live-text-projector/app.html">
+  <meta name="theme-color" content="#f7f5ef">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/site.js"></script>
+  
+  <!-- Serverless Public Signaling Library for Tool -->
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+  <!-- Scoped Tool CSS with Mobile Fixes so it doesn't break main website design -->
+  <style>
+    .live-text-tool *, .live-text-tool *::before, .live-text-tool *::after {
+      box-sizing: border-box;
+    }
+
+    .live-text-tool {
+      display: flex;
+      flex-direction: column;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #334155;
+      margin-top: 24px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .live-text-tool .tool-controls {
+      background: #1e293b;
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid #334155;
+    }
+
+    .live-text-tool .group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap; 
+      width: 100%;
+    }
+
+    @media (min-width: 600px) {
+      .live-text-tool .group {
+        width: auto;
+      }
+    }
+
+    .live-text-tool label { font-size: 13px; color: #94a3b8; }
+
+    .live-text-tool select, 
+    .live-text-tool input, 
+    .live-text-tool button {
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      outline: none;
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: inherit;
+      max-width: 100%;
+    }
+
+    .live-text-tool input[type="number"] { width: 60px; }
+    .live-text-tool input[type="text"] { width: 120px; flex-grow: 1; }
+
+    .live-text-tool button {
+      cursor: pointer;
+      background: #2563eb;
+      border-color: #1d4ed8;
+      font-weight: 500;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .live-text-tool button:hover { background: #1d4ed8; }
+    
+    .live-text-tool button.alt { background: #334155; border-color: #475569; }
+    .live-text-tool button.alt:hover { background: #475569; }
+
+    .live-text-tool .status-bar {
+      padding: 8px 16px;
+      font-size: 12px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+      color: #94a3b8;
+    }
+
+    .live-text-tool .status-left { display: flex; align-items: center; gap: 8px; }
+    .live-text-tool #dot { width: 8px; height: 8px; border-radius: 50%; background: #eab308; flex-shrink: 0; }
+
+    .live-text-tool textarea {
+      flex: 1;
+      width: 100%;
+      min-height: 400px;
+      border: none;
+      outline: none;
+      padding: 16px;
+      font-size: 16px;
+      line-height: 1.6;
+      font-family: Consolas, "Courier New", monospace;
+      resize: vertical;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  
+  <header class="topbar">
+    <a class="wordmark" href="../../index.html">
+      <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav class="nav" id="primary-nav" aria-label="Main navigation">
+      <a href="../../index.html#tools">Tools</a>
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main class="content-shell workspace-shell" id="main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>Live Text Projector</span>
+    </nav>
+
+    <section class="workspace-heading">
+      <p class="kicker">ACTIVE WORKSPACE</p>
+      <h1>Live Text Projector</h1>
+      <p class="article-lead">Real-time peer-to-peer text transfer. Connect to the same port on different devices to sync text instantly without a backend server.</p>
+      <a class="subtle-link" href="./">Read the project guide ←</a>
+    </section>
+
+    <!-- The actual Tool UI -->
+    <section class="live-text-tool" aria-label="Live Text Projector Tool">
+      <div class="tool-controls">
+        <div class="group">
+          <label>Port:</label>
+          <select id="portSelect">
+            <option value="port-2026">2026 (Default)</option>
+            <option value="port-143">143</option>
+            <option value="port-8080">8080</option>
+            <option value="custom">Custom Port...</option>
+          </select>
+          <input type="text" id="customPort" placeholder="Custom Port" style="display: none;" />
+
+          <label style="margin-left: 6px;">Limit:</label>
+          <input type="number" id="userLimit" value="2" min="2" max="10" title="Max allowed users" />
+
+          <button id="connectBtn">Apply & Reconnect</button>
+        </div>
+
+        <div class="group">
+          <button id="copyBtn" class="alt">Copy</button>
+          <button id="cutBtn" class="alt">Cut</button>
+          <button id="pasteBtn" class="alt">Paste</button>
+          <button id="clearBtn" class="alt">Clear</button>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-left">
+          <span id="dot"></span>
+          <span id="statusText">Connecting...</span>
+        </div>
+        <div id="statsText">0 chars | 0 words</div>
+      </div>
+
+      <textarea id="text" placeholder="Type or paste text..."></textarea>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-main">
+      <a class="wordmark" href="../../index.html">
+        <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+      </a>
+      <p>A maker's shelf of practical tools, learning and experiments.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Legal and information">
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a href="../../privacy-policy.html">Privacy</a>
+      <a href="../../terms.html">Terms</a>
+      <a href="../../disclaimer.html">Disclaimer</a>
+    </nav>
+    <small>© 2026 Sumit Sharma · Independent projects</small>
+  </footer>
+
+  <!-- Tool Logic Script -->
+  <script>
+    let activePort = "port-2026";
+    let maxUsers = 2; // Total allowed users (including self)
+    const myId = "peer_" + Math.random().toString(36).substring(2, 9);
+
+    // Free global public broker - No custom backend URL needed
+    const mqttClient = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
+
+    const textBox = document.getElementById("text");
+    const statusText = document.getElementById("statusText");
+    const statsText = document.getElementById("statsText");
+    const dot = document.getElementById("dot");
+    const portSelect = document.getElementById("portSelect");
+    const customPort = document.getElementById("customPort");
+    const userLimit = document.getElementById("userLimit");
+    const connectBtn = document.getElementById("connectBtn");
+
+    const peers = {}; // Map of targetId -> { pc, channel }
+    let typingTimer = null;
+
+    function updateStatus(msg, color) {
+      const activeCount = Object.values(peers).filter(p => p.channel && p.channel.readyState === "open").length;
+      statusText.textContent = `[${activePort}] ${msg} | Active: ${activeCount + 1}/${maxUsers}`;
+      dot.style.background = color;
+    }
+
+    function updateStats() {
+      const val = textBox.value;
+      statsText.textContent = `${val.length} chars | ${val.trim() ? val.trim().split(/\s+/).length : 0} words`;
+    }
+
+    function broadcastText(text) {
+      Object.values(peers).forEach(({ channel }) => {
+        if (channel && channel.readyState === "open") {
+          channel.send(text);
+        }
+      });
+    }
+
+    function cleanupPeer(targetId) {
+      if (peers[targetId]) {
+        if (peers[targetId].channel) peers[targetId].channel.close();
+        if (peers[targetId].pc) peers[targetId].pc.close();
+        delete peers[targetId];
+      }
+      updateStatus("Peer left", "#eab308");
+    }
+
+    function sendSignal(data) {
+      data.from = myId;
+      mqttClient.publish(`p2p-transfer-room/${activePort}`, JSON.stringify(data));
+    }
+
+    function createPeerConnection(targetId) {
+      if (peers[targetId]) return peers[targetId].pc;
+
+      const pc = new RTCPeerConnection({
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" }
+        ]
+      });
+
+      peers[targetId] = { pc, channel: null };
+
+      pc.onicecandidate = e => {
+        if (e.candidate) {
+          sendSignal({ type: "ice", candidate: e.candidate, to: targetId });
+        }
+      };
+
+      pc.ondatachannel = e => {
+        peers[targetId].channel = e.channel;
+        setupChannel(e.channel, targetId);
+      };
+
+      pc.onconnectionstatechange = () => {
+        if (["disconnected", "failed", "closed"].includes(pc.connectionState)) {
+          cleanupPeer(targetId);
+        }
+      };
+
+      return pc;
+    }
+
+    function setupChannel(channel, targetId) {
+      channel.onopen = () => {
+        updateStatus("Peer Connected", "#10b981");
+        if (textBox.value) channel.send(textBox.value);
+      };
+
+      channel.onmessage = e => {
+        textBox.value = e.data;
+        updateStats();
+      };
+
+      channel.onclose = () => cleanupPeer(targetId);
+    }
+
+    async function initiateOffer(targetId) {
+      const pc = createPeerConnection(targetId);
+      const channel = pc.createDataChannel("text");
+      peers[targetId].channel = channel;
+      setupChannel(channel, targetId);
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      sendSignal({ type: "offer", offer: pc.localDescription, to: targetId });
+    }
+
+    function joinPort() {
+      // Reset existing peers
+      Object.keys(peers).forEach(id => cleanupPeer(id));
+
+      updateStatus("Listening on port...", "#eab308");
+      mqttClient.subscribe(`p2p-transfer-room/${activePort}`);
+      sendSignal({ type: "hello" });
+    }
+
+    // MQTT Connection Logic
+    mqttClient.on("connect", () => {
+      joinPort();
+    });
+
+    mqttClient.on("message", async (topic, payload) => {
+      let data;
+      try {
+        data = JSON.parse(payload.toString());
+      } catch (e) {
+        return;
+      }
+
+      if (!data || !data.from || data.from === myId) return;
+
+      // Room full rejection check
+      if (data.type === "room-full" && data.to === myId) {
+        updateStatus("Connection rejected: Room is Full!", "#ef4444");
+        return;
+      }
+
+      // Ignore signals intended for someone else
+      if (data.to && data.to !== myId) return;
+
+      // Handle Hello (Discovery)
+      if (data.type === "hello") {
+        const activeConnections = Object.keys(peers).length;
+
+        if (activeConnections >= (maxUsers - 1)) {
+          sendSignal({ type: "room-full", to: data.from });
+          return;
+        }
+
+        if (myId < data.from) {
+          await initiateOffer(data.from);
+        }
+        return;
+      }
+
+      // Handle Offer
+      if (data.type === "offer") {
+        const activeConnections = Object.keys(peers).length;
+        if (activeConnections >= (maxUsers - 1)) {
+          sendSignal({ type: "room-full", to: data.from });
+          return;
+        }
+
+        const pc = createPeerConnection(data.from);
+        await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+
+        sendSignal({ type: "answer", answer: pc.localDescription, to: data.from });
+        return;
+      }
+
+      // Handle Answer
+      if (data.type === "answer" && peers[data.from]) {
+        await peers[data.from].pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+        return;
+      }
+
+      // Handle ICE Candidate
+      if (data.type === "ice" && peers[data.from]) {
+        try {
+          await peers[data.from].pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
+
+    // Text Input Handling
+    textBox.addEventListener("input", () => {
+      updateStats();
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        broadcastText(textBox.value);
+      }, 20);
+    });
+
+    // Dropdown Change
+    portSelect.addEventListener("change", () => {
+      customPort.style.display = portSelect.value === "custom" ? "inline-block" : "none";
+      if (portSelect.value === "custom") customPort.focus();
+    });
+
+    // Apply Settings Button
+    connectBtn.addEventListener("click", () => {
+      const target = portSelect.value === "custom" ? customPort.value.trim() : portSelect.value;
+      if (!target) return alert("Valid port required");
+
+      if (activePort) {
+        mqttClient.unsubscribe(`p2p-transfer-room/${activePort}`);
+      }
+
+      activePort = target;
+      maxUsers = parseInt(userLimit.value) || 2;
+      joinPort();
+    });
+
+    // Clipboard Actions
+    document.getElementById("copyBtn").addEventListener("click", () => navigator.clipboard.writeText(textBox.value));
+    document.getElementById("cutBtn").addEventListener("click", () => {
+      navigator.clipboard.writeText(textBox.value);
+      textBox.value = "";
+      updateStats();
+      broadcastText("");
+    });
+    document.getElementById("pasteBtn").addEventListener("click", async () => {
+      textBox.value += await navigator.clipboard.readText();
+      updateStats();
+      broadcastText(textBox.value);
+    });
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      textBox.value = "";
+      updateStats();
+      broadcastText("");
+    });
+    
+    // Page load- 3 second auto-click
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => connectBtn.click(), 3000);
+    });
+  </script>
+</body>
+  </html>
+  
