@@ -1,10 +1,210 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>360° Viewer System starter workspace | Sumit Sharma Tools</title><meta name="description" content="Nonfunctional starter workspace for 360° Viewer System; explains the implementation still required.">
-<link rel="canonical" href="https://thesumitsharma.in/tools/360-viewer-system/app.html"><meta property="og:type" content="website"><meta property="og:title" content="360° Viewer System starter workspace | Sumit Sharma Tools"><meta property="og:description" content="Nonfunctional starter workspace for 360° Viewer System; explains the implementation still required."><meta property="og:url" content="https://thesumitsharma.in/tools/360-viewer-system/app.html">
-<meta name="theme-color" content="#f7f5ef"><link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg"><link rel="stylesheet" href="../../assets/site.css"><script defer src="../../assets/site.js"></script></head>
-<body><a class="skip-link" href="#main">Skip to content</a>
-<header class="topbar"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
-<nav class="nav" id="primary-nav" aria-label="Main navigation"><a href="../../index.html#tools">Tools</a><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></nav></header>
-<main class="content-shell workspace-shell" id="main"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>360° Viewer System</span></nav><section class="workspace-heading"><p class="kicker">STARTER WORKSPACE / NOT FUNCTIONAL</p><h1>360° Viewer System</h1><p class="article-lead">This is a nonfunctional starter page. It has no working 360° viewer system controls, processing, audio, game loop or saved state.</p><a class="subtle-link" href="./">Read the project guide ←</a></section><section class="placeholder-panel" aria-label="Nonfunctional workspace placeholder"><div class="placeholder-top"><span>WORKSPACE PREVIEW</span><span class="status-tag">NOT IMPLEMENTED</span></div><div class="placeholder-art"><span class="placeholder-symbol">360</span><div><strong>Work in progress</strong><p>This area intentionally contains no pretend interactive controls.</p></div></div><div class="placeholder-foot">Starter shell · No data submitted · No tool functionality</div></section><section class="build-notes"><div><p class="kicker">Next implementation</p><h2>What a complete version still needs</h2></div><ul><li>A consistent image sequence of the same subject, captured from a fixed position, plus a browser implementation that maps pointer or touch position to frame index</li><li>Accessible states, meaningful error handling and mobile interaction.</li></ul></section></main><footer class="footer"><div class="footer-main"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><p>A maker's shelf of practical tools, learning and experiments.</p></div><nav class="footer-nav" aria-label="Legal and information"><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a href="../../privacy-policy.html">Privacy</a><a href="../../terms.html">Terms</a><a href="../../disclaimer.html">Disclaimer</a></nav><small>© 2026 Sumit Sharma · Independent projects</small></footer>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>360° Viewer System | Sumit Sharma Tools</title>
+  <meta name="description" content="Interactive 360 Degree Viewer Workspace. Upload and view panorama images instantly.">
+  <link rel="canonical" href="https://thesumitsharma.in/tools/360-viewer-system/app.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="360° Viewer System | Sumit Sharma Tools">
+  <meta property="og:description" content="Interactive 360 Degree Viewer Workspace. Upload and view panorama images instantly.">
+  <meta property="og:url" content="https://thesumitsharma.in/tools/360-viewer-system/app.html">
+  <meta name="theme-color" content="#f7f5ef">
+  
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/site.js"></script>
+
+  <!-- Pannellum 360 Viewer CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+
+  <style>
+    .viewer-tool-wrapper {
+      margin: 24px 0 40px 0;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .viewer-box {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    #panorama {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Change image button (Red Plus) */
+    .change-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px; 
+      background: #ef4444; 
+      color: white;
+      border: 2px solid white;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 26px;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .change-btn:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+
+    .instruction-text {
+      text-align: center;
+      margin-top: 16px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* Mobile Responsive View */
+    @media (max-width: 768px) {
+      .viewer-box {
+        height: 350px; 
+      }
+      .change-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  
+  <header class="topbar">
+    <a class="wordmark" href="../../index.html">
+      <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav class="nav" id="primary-nav" aria-label="Main navigation">
+      <a href="../../index.html#tools">Tools</a>
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main class="content-shell workspace-shell" id="main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>360° Viewer System</span>
+    </nav>
+
+    <section class="workspace-heading">
+      <p class="kicker">ACTIVE WORKSPACE</p>
+      <h1>360° Viewer System</h1>
+      <p class="article-lead">Interactive panoramic viewer. Drag to look around, use the gyro sensor on mobile, or click the full-screen icon. Upload your own equirectangular image to preview it instantly.</p>
+      <a class="subtle-link" href="./">Read the project guide ←</a>
+    </section>
+
+    <!-- 360 Tool -->
+    <section class="viewer-tool-wrapper">
+      <div class="viewer-box">
+        <div id="panorama"></div>
+        <button id="changeImageBtn" class="change-btn" title="Upload 360 Image">&times;</button>
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+      </div>
+      
+      <p class="instruction-text">
+        <span style="color: #ef4444; font-size: 18px;">&times;</span> Red cross par click karke apni 360 photo upload karein!
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-main">
+      <a class="wordmark" href="../../index.html">
+        <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+      </a>
+      <p>A maker's shelf of practical tools, learning and experiments.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Legal and information">
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a href="../../privacy-policy.html">Privacy</a>
+      <a href="../../terms.html">Terms</a>
+      <a href="../../disclaimer.html">Disclaimer</a>
+    </nav>
+    <small>© 2026 Sumit Sharma · Independent projects</small>
+  </footer>
+
+  <!-- Pannellum 360 Viewer JS -->
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let viewer;
+
+      function initViewer(imageUrl) {
+        if (viewer) {
+          viewer.destroy();
+        }
+
+        // Initialize Pannellum Configured for Gyroscope & Fullscreen
+        viewer = pannellum.viewer('panorama', {
+          "type": "equirectangular",
+          "panorama": imageUrl,
+          "autoLoad": true,
+          "showControls": true,
+          "showFullscreenCtrl": true, // Full-screen enable
+          "orientationOnByDefault": true, // Enables Gyroscope control on mobile by default
+          "compass": false,
+          "mouseZoom": true
+        });
+      }
+
+      // Default demo image
+      const defaultDemoImage = "https://pannellum.org/images/alma.jpg";
+      initViewer(defaultDemoImage);
+
+      const changeBtn = document.getElementById('changeImageBtn');
+      const fileInput = document.getElementById('imageInput');
+
+      changeBtn.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            initViewer(event.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
