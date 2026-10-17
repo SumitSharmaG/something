@@ -1,13 +1,26 @@
-<!DOCTYPE html>
-<html lang="hi">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All-in-One PDF & Image Automation Tool Pro</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PDF Editor Automation | Sumit Sharma Tools</title>
+  <meta name="description" content="All-in-One PDF & Image Automation Tool Pro for watermarking, headers, footers, and links.">
+  <link rel="canonical" href="https://thesumitsharma.in/tools/pdf-editor-automation/app.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PDF Editor Automation | Sumit Sharma Tools">
+  <meta property="og:description" content="All-in-One PDF & Image Automation Tool Pro for watermarking, headers, footers, and links.">
+  <meta property="og:url" content="https://thesumitsharma.in/tools/pdf-editor-automation/app.html">
+  <meta name="theme-color" content="#f7f5ef">
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/site.js"></script>
+
+  <!-- PDF-lib for processing -->
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+  <!-- Scoped Tool CSS -->
   <style>
-    :root {
-      --bg-color: #f1f5f9;
+    .pdf-tool-wrapper {
       --card-bg: #ffffff;
       --text-color: #0f172a;
       --text-muted: #475569;
@@ -16,13 +29,15 @@
       --border-color: #cbd5e1;
       --tab-bg: #e2e8f0;
       --input-bg: #f8fafc;
-      --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       --download-bg: #f8fafc;
       --progress-bg: #e2e8f0;
+      width: 100%;
+      margin: 24px 0 40px 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    [data-theme="dark"] {
-      --bg-color: #090d16;
+    .pdf-tool-wrapper[data-theme="dark"] {
       --card-bg: #131b2e;
       --text-color: #f8fafc;
       --text-muted: #94a3b8;
@@ -31,33 +46,27 @@
       --border-color: #1e293b;
       --tab-bg: #1a253f;
       --input-bg: #0b111e;
-      --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
       --download-bg: #0b111e;
       --progress-bg: #1e293b;
     }
 
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease; }
-    
-    body { 
-      background-color: var(--bg-color); 
-      margin: 0; 
-      padding: 16px; 
-      color: var(--text-color); 
-      min-height: 100vh; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
+    .pdf-tool-wrapper *, .pdf-tool-wrapper *::before, .pdf-tool-wrapper *::after {
+      box-sizing: border-box;
+      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
     }
-    
-    .container { 
+
+    .pdf-tool-container { 
       width: 100%; 
-      max-width: 650px; 
       background: var(--card-bg); 
-      padding: 28px; 
-      border-radius: 20px; 
+      padding: 24px; 
+      border-radius: 16px; 
       box-shadow: var(--shadow); 
       border: 1px solid var(--border-color); 
+      color: var(--text-color);
       animation: fadeIn 0.5s ease-out;
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes fadeIn {
@@ -65,12 +74,12 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .pdf-tool-wrapper .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 12px; }
     
-    h2 { 
+    .pdf-tool-wrapper h2 { 
       margin: 0; 
       color: var(--primary); 
-      font-size: 24px; 
+      font-size: 22px; 
       font-weight: 800; 
       letter-spacing: -0.5px; 
       display: flex;
@@ -78,38 +87,40 @@
       gap: 10px;
     }
     
-    /* Premium Dark Mode Toggle */
-    .theme-toggle { 
+    .pdf-tool-wrapper .theme-toggle { 
       background: var(--tab-bg); 
       border: 1px solid var(--border-color); 
       color: var(--text-color); 
-      width: 44px; 
-      height: 44px; 
+      width: 40px; 
+      height: 40px; 
       border-radius: 50%; 
       display: flex; 
       align-items: center; 
       justify-content: center; 
       cursor: pointer; 
-      font-size: 20px; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+      font-size: 18px; 
+      padding: 0;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 5;
     }
-    .theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+    .pdf-tool-wrapper .theme-toggle:hover { transform: scale(1.05); }
 
-    .desc { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-weight: 500; }
+    .pdf-tool-wrapper .desc { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-weight: 500; }
     
-    .section-title { font-weight: 700; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; margin-top: 18px; display: block; text-transform: uppercase; letter-spacing: 0.8px; }
+    .pdf-tool-wrapper .section-title { font-weight: 700; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; margin-top: 18px; display: block; text-transform: uppercase; letter-spacing: 0.8px; }
     
-    /* Smooth Interactive Tabs */
-    .mode-tabs { display: flex; gap: 8px; margin-bottom: 8px; background: var(--tab-bg); padding: 6px; border-radius: 12px; border: 1px solid var(--border-color); }
-    .tab-btn { flex: 1; padding: 11px; border: none; background: transparent; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; text-align: center; }
-    .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); transform: translateY(-1px); }
+    .pdf-tool-wrapper .mode-tabs { display: flex; gap: 8px; margin-bottom: 8px; background: var(--tab-bg); padding: 6px; border-radius: 12px; border: 1px solid var(--border-color); flex-wrap: wrap; }
+    .pdf-tool-wrapper .tab-btn { flex: 1; min-width: 120px; padding: 10px; border: none; background: transparent; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; text-align: center; position: relative; z-index: 5; }
+    .pdf-tool-wrapper .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
 
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 13px; color: var(--text-color); }
+    .pdf-tool-wrapper .form-group { margin-bottom: 16px; width: 100%; position: relative; z-index: 5; }
+    .pdf-tool-wrapper label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 13px; color: var(--text-color); }
     
-    input[type="text"], select { 
+    .pdf-tool-wrapper input[type="text"], .pdf-tool-wrapper select { 
       width: 100%; 
-      padding: 13px 16px; 
+      max-width: 100%;
+      padding: 12px 14px; 
       border: 2px solid var(--border-color); 
       border-radius: 10px; 
       font-size: 14px; 
@@ -117,58 +128,59 @@
       background: var(--input-bg); 
       color: var(--text-color); 
       outline: none; 
+      font-family: inherit;
     }
-    input[type="text"]:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
+    .pdf-tool-wrapper input[type="text"]:focus, .pdf-tool-wrapper select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
     
-    /* Drag & Drop Styled File Upload Box */
-    .file-drop-area {
+    .pdf-tool-wrapper .file-drop-area {
       position: relative;
       border: 2px dashed var(--border-color);
       background: var(--input-bg);
       border-radius: 12px;
-      padding: 24px;
+      padding: 24px 16px;
       text-align: center;
       cursor: pointer;
-      transition: 0.2s;
+      width: 100%;
     }
-    .file-drop-area:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.02); }
-    .file-drop-area input[type="file"] {
+    .pdf-tool-wrapper .file-drop-area:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.02); }
+    
+    .pdf-tool-wrapper .file-drop-area input[type="file"] {
       position: absolute;
       left: 0; top: 0; width: 100%; height: 100%;
-      opacity: 0; cursor: pointer;
+      opacity: 0; cursor: pointer; z-index: 10;
     }
-    .file-msg { font-size: 14px; font-weight: 600; color: var(--text-color); }
-    .file-submsg { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    
+    .pdf-tool-wrapper .file-msg { font-size: 14px; font-weight: 600; color: var(--text-color); word-wrap: break-word; }
+    .pdf-tool-wrapper .file-submsg { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
-    /* Action Button with Motion */
-    .btn { 
+    .pdf-tool-wrapper .btn { 
       width: 100%; 
       background: var(--primary); 
       color: #fff; 
       border: none; 
-      padding: 15px; 
-      border-radius: 12px; 
-      font-size: 16px; 
+      padding: 14px; 
+      border-radius: 10px; 
+      font-size: 15px; 
       font-weight: 700; 
       cursor: pointer; 
       margin-top: 16px; 
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25); 
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      font-family: inherit;
+      position: relative;
+      z-index: 5;
     }
-    .btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); }
-    .btn:active { transform: translateY(0); }
-    .btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none; }
+    .pdf-tool-wrapper .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .pdf-tool-wrapper .btn:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; transform: none; }
     
-    /* Progress Bar UI */
-    .progress-container {
+    .pdf-tool-wrapper .progress-container {
       margin-top: 18px;
       display: none;
-      animation: fadeIn 0.3s ease;
+      width: 100%;
     }
-    .progress-info {
+    .pdf-tool-wrapper .progress-info {
       display: flex;
       justify-content: space-between;
       font-size: 13px;
@@ -176,14 +188,14 @@
       margin-bottom: 6px;
       color: var(--text-color);
     }
-    .progress-track {
+    .pdf-tool-wrapper .progress-track {
       width: 100%;
-      height: 10px;
+      height: 8px;
       background: var(--progress-bg);
       border-radius: 6px;
       overflow: hidden;
     }
-    .progress-bar {
+    .pdf-tool-wrapper .progress-bar {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, #2563eb, #10b981);
@@ -191,511 +203,302 @@
       transition: width 0.3s ease;
     }
 
-    #status { margin-top: 14px; font-weight: 700; text-align: center; font-size: 14px; }
-    .success { color: #10b981; }
-    .error { color: #ef4444; }
+    .pdf-tool-wrapper #status { margin-top: 14px; font-weight: 700; text-align: center; font-size: 14px; word-wrap: break-word; }
+    .pdf-tool-wrapper .success { color: #10b981; }
+    .pdf-tool-wrapper .error { color: #ef4444; }
     
-    /* Download List UI */
-    .file-list { margin-top: 24px; border-top: 2px solid var(--border-color); padding-top: 18px; animation: fadeIn 0.4s ease; }
-    .download-item { 
+    .pdf-tool-wrapper .file-list { margin-top: 24px; border-top: 2px solid var(--border-color); padding-top: 18px; width: 100%; }
+    .pdf-tool-wrapper .download-item { 
       display: flex; 
       flex-direction: row; 
       justify-content: space-between; 
       align-items: center; 
-      padding: 14px 18px; 
+      padding: 12px 16px; 
       background: var(--download-bg); 
       border: 1px solid var(--border-color); 
-      border-radius: 12px; 
+      border-radius: 10px; 
       margin-bottom: 10px; 
-      gap: 14px; 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      gap: 12px; 
+      flex-wrap: wrap;
     }
-    .download-item:hover { border-color: var(--primary); }
-    .file-name-span { font-size: 14px; font-weight: 600; word-break: break-all; color: var(--text-color); flex: 1; }
+    .pdf-tool-wrapper .file-name-span { font-size: 14px; font-weight: 600; word-break: break-all; color: var(--text-color); flex: 1; min-width: 150px; }
     
-    .download-btn { 
+    .pdf-tool-wrapper .download-btn { 
       background: #10b981; 
       color: white; 
-      padding: 10px 20px; 
-      border-radius: 10px; 
+      padding: 10px 16px; 
+      border-radius: 8px; 
       text-decoration: none; 
       font-size: 13px; 
       font-weight: 700; 
       display: inline-flex; 
       align-items: center; 
       justify-content: center; 
-      gap: 6px;
       white-space: nowrap; 
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); 
+      position: relative;
+      z-index: 5;
     }
-    .download-btn:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35); }
+    .pdf-tool-wrapper .download-btn:hover { background: #059669; }
 
-    /* Ultra Responsive Media Queries */
+    /* EDGE BUTTONS (BACK & FULLSCREEN) */
+    .pdf-tool-wrapper .edge-buttons {
+        position: absolute;
+        bottom: 24px;
+        right: 24px;
+        display: flex;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .pdf-tool-wrapper .edge-btn {
+        background: var(--tab-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        transition: 0.2s;
+        backdrop-filter: blur(5px);
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .pdf-tool-wrapper .edge-btn:hover { 
+        transform: scale(1.05);
+        background: var(--border-color);
+    }
+
     @media (max-width: 600px) {
-      body { padding: 10px; align-items: flex-start; }
-      .container { padding: 20px 16px; border-radius: 16px; margin-top: 10px; }
-      h2 { font-size: 20px; }
-      .download-item { flex-direction: column; align-items: stretch; text-align: center; gap: 12px; padding: 16px; }
-      .download-btn { width: 100%; padding: 12px; font-size: 14px; }
+      .pdf-tool-container { padding: 16px; }
+      .pdf-tool-wrapper h2 { font-size: 20px; }
+      .pdf-tool-wrapper .download-item { flex-direction: column; align-items: stretch; text-align: center; }
+      .pdf-tool-wrapper .download-btn { width: 100%; }
+      .pdf-tool-wrapper .edge-buttons {
+        bottom: 16px;
+        right: 16px;
+      }
     }
   </style>
 </head>
-<body data-theme="light">
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  
+  <header class="topbar">
+    <a class="wordmark" href="../../index.html">
+      <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav class="nav" id="primary-nav" aria-label="Main navigation">
+      <a href="../../index.html#tools">Tools</a>
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
 
-<div class="container">
-  <div class="header-row">
-    <h2>📄 PDF & Image Automation</h2>
-    <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌙</button>
-  </div>
-  <div class="desc">Watermark + Header + Footer + Clickable Redirect Link (Ultra Smooth Professional Edition with Live Progress)</div>
+  <main class="content-shell workspace-shell" id="main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>PDF Editor Automation</span>
+    </nav>
 
-  <!-- Processing Mode Switcher -->
-  <span class="section-title">1. Processing Mode Select Karein</span>
-  <div class="mode-tabs">
-    <button class="tab-btn active" id="tabType1" onclick="switchMode('type1')">PDF Markup</button>
-    <button class="tab-btn" id="tabType2" onclick="switchMode('type2')">Images to PDF</button>
-  </div>
+    <section class="workspace-heading">
+      <p class="kicker">ACTIVE WORKSPACE</p>
+      <h1>PDF Editor Automation Pro</h1>
+      <p class="article-lead">Easily process PDFs locally in your browser. Add watermarks, headers, footers, clickable links, or convert multiple images directly to a styled PDF.</p>
+      <a class="subtle-link" href="./">Read the project guide ←</a>
+    </section>
 
-  <!-- Watermark Variant Switcher -->
-  <span class="section-title">2. Watermark Variant Select Karein</span>
-  <div class="mode-tabs">
-    <button class="tab-btn active" id="tabMark1" onclick="switchWatermark('1mark')">1 Mark (Center)</button>
-    <button class="tab-btn" id="tabMark3" onclick="switchWatermark('3mark')">3 Mark (Diagonal)</button>
-  </div>
+    <!-- Tool Integration -->
+    <section class="pdf-tool-wrapper" id="pdfToolWrapper" data-theme="light">
+      <div class="pdf-tool-container">
+        
+        <!-- Edge Buttons for Fullscreen & Refresh at bottom right of the tool -->
+        <div class="edge-buttons">
+          <button class="edge-btn" id="btnRefresh" title="Refresh">↻</button>
+          <button class="edge-btn" id="btnFullscreen" title="Toggle Fullscreen">⛶</button>
+        </div>
 
-  <div class="form-group" style="margin-top: 18px;">
-    <label>Header Text (Top Center):</label>
-    <input type="text" id="headerText" value="Download By --> MsbuExam.TheSumitSharma.in">
-  </div>
+        <div class="header-row">
+          <h2>📄 PDF & Image Automation</h2>
+          <button class="theme-toggle" id="themeToggleBtn" title="Toggle Dark/Light Mode">🌙</button>
+        </div>
+        <div class="desc">Watermark + Header + Footer + Clickable Redirect Link (Professional Edition running securely in your browser)</div>
 
-  <div class="form-group">
-    <label>Footer Text (Bottom Center):</label>
-    <input type="text" id="footerText" value="Study Meterial Of '' Maharaja Surajmal Brij University, Bhartpur '' --> Visit Our Official Website | Click Here !!!">
-  </div>
+        <!-- Processing Mode Switcher -->
+        <span class="section-title">1. Processing Mode Select Karein</span>
+        <div class="mode-tabs">
+          <button class="tab-btn active" id="tabType1">PDF Markup</button>
+          <button class="tab-btn" id="tabType2">Images to PDF</button>
+        </div>
 
-  <div class="form-group">
-    <label>Watermark Text:</label>
-    <input type="text" id="watermarkText" value="MsbuExam.TheSumitSharma.in">
-  </div>
+        <!-- Watermark Variant Switcher -->
+        <span class="section-title">2. Watermark Variant Select Karein</span>
+        <div class="mode-tabs">
+          <button class="tab-btn active" id="tabMark1">1 Mark (Center)</button>
+          <button class="tab-btn" id="tabMark3">3 Mark (Diagonal)</button>
+        </div>
 
-  <div class="form-group">
-    <label>Redirect Website URL:</label>
-    <input type="text" id="redirectUrl" value="https://MsbuExam.TheSumitSharma.in">
-  </div>
+        <div class="form-group" style="margin-top: 18px;">
+          <label>Header Text (Top Center):</label>
+          <input type="text" id="headerText" value="Download By --> MsbuExam.TheSumitSharma.in">
+        </div>
 
-  <!-- Type 1 Input: PDF Upload -->
-  <div id="pdfInputGroup" class="form-group">
-    <label>PDF Files Select Karein:</label>
-    <div class="file-drop-area">
-      <div class="file-msg" id="pdfMsg">📁 Tap ya Browse karke PDF select karein</div>
-      <div class="file-submsg">Multiple select supported</div>
-      <input type="file" id="pdfFiles" accept="application/pdf" multiple onchange="updateFileName('pdfFiles', 'pdfMsg')">
+        <div class="form-group">
+          <label>Footer Text (Bottom Center):</label>
+          <input type="text" id="footerText" value="Study Meterial Of '' Maharaja Surajmal Brij University, Bhartpur '' --> Visit Our Official Website | Click Here !!!">
+        </div>
+
+        <div class="form-group">
+          <label>Watermark Text:</label>
+          <input type="text" id="watermarkText" value="MsbuExam.TheSumitSharma.in">
+        </div>
+
+        <div class="form-group">
+          <label>Redirect Website URL:</label>
+          <input type="text" id="redirectUrl" value="https://MsbuExam.TheSumitSharma.in">
+        </div>
+
+        <!-- Type 1 Input: PDF Upload -->
+        <div id="pdfInputGroup" class="form-group">
+          <label>PDF Files Select Karein:</label>
+          <div class="file-drop-area">
+            <div class="file-msg" id="pdfMsg">📁 Tap ya Browse karke PDF select karein</div>
+            <div class="file-submsg">Multiple select supported</div>
+            <input type="file" id="pdfFiles" accept="application/pdf" multiple>
+          </div>
+        </div>
+
+        <!-- Type 2 Input: Multi Image Upload -->
+        <div id="imageInputGroup" class="form-group" style="display: none;">
+          <label>Output PDF File Name:</label>
+          <input type="text" id="outputPdfName" value="Msbu_Study_Material.pdf" style="margin-bottom: 14px;">
+          <label>Images Select Karein (JPG/PNG/WEBP):</label>
+          <div class="file-drop-area">
+            <div class="file-msg" id="imgMsg">🖼️ Tap ya Browse karke Images select karein</div>
+            <div class="file-submsg">Multiple select supported</div>
+            <input type="file" id="imageFiles" accept="image/*" multiple>
+          </div>
+        </div>
+
+        <button class="btn" id="processBtn">
+          <span>⚡ Process & Generate PDF</span>
+        </button>
+
+        <!-- Live Progress Bar -->
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-info">
+            <span id="progressText">Processing...</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+
+        <div id="status"></div>
+
+        <div class="file-list" id="fileList" style="display:none;">
+          <strong style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Processed Files Ready:</strong>
+          <div id="downloadsContainer" style="margin-top: 10px;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-main">
+      <a class="wordmark" href="../../index.html">
+        <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+      </a>
+      <p>A maker's shelf of practical tools, learning and experiments.</p>
     </div>
-  </div>
+    <nav class="footer-nav" aria-label="Legal and information">
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a href="../../privacy-policy.html">Privacy</a>
+      <a href="../../terms.html">Terms</a>
+      <a href="../../disclaimer.html">Disclaimer</a>
+    </nav>
+    <small>© 2026 Sumit Sharma · Independent projects</small>
+  </footer>
 
-  <!-- Type 2 Input: Multi Image Upload -->
-  <div id="imageInputGroup" class="form-group" style="display: none;">
-    <label>Output PDF File Name:</label>
-    <input type="text" id="outputPdfName" value="Msbu_Study_Material.pdf" style="margin-bottom: 14px;">
-    <label>Images Select Karein (JPG/PNG/WEBP):</label>
-    <div class="file-drop-area">
-      <div class="file-msg" id="imgMsg">🖼️ Tap ya Browse karke Images select karein</div>
-      <div class="file-submsg">Multiple select supported</div>
-      <input type="file" id="imageFiles" accept="image/*" multiple onchange="updateFileName('imageFiles', 'imgMsg')">
-    </div>
-  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let currentMode = 'type1';
+      let watermarkVariant = '1mark';
 
-  <button class="btn" id="processBtn" onclick="handleProcess()">
-    <span>⚡ Process & Generate PDF</span>
-  </button>
-
-  <!-- Live Progress Bar -->
-  <div class="progress-container" id="progressContainer">
-    <div class="progress-info">
-      <span id="progressText">Processing...</span>
-      <span id="progressPercent">0%</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-  </div>
-
-  <div id="status"></div>
-
-  <div class="file-list" id="fileList" style="display:none;">
-    <strong style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Processed Files Ready:</strong>
-    <div id="downloadsContainer" style="margin-top: 10px;"></div>
-  </div>
-</div>
-
-<script>
-let currentMode = 'type1';
-let watermarkVariant = '1mark';
-
-function toggleTheme() {
-  const body = document.body;
-  const btn = document.getElementById('themeToggleBtn');
-  if (body.getAttribute('data-theme') === 'dark') {
-    body.setAttribute('data-theme', 'light');
-    btn.innerText = '🌙';
-  } else {
-    body.setAttribute('data-theme', 'dark');
-    btn.innerText = '☀️';
-  }
-}
-
-function switchMode(mode) {
-  currentMode = mode;
-  document.getElementById('tabType1').classList.toggle('active', mode === 'type1');
-  document.getElementById('tabType2').classList.toggle('active', mode === 'type2');
-  document.getElementById('pdfInputGroup').style.display = mode === 'type1' ? 'block' : 'none';
-  document.getElementById('imageInputGroup').style.display = mode === 'type2' ? 'block' : 'none';
-  document.getElementById('status').innerText = '';
-  document.getElementById('progressContainer').style.display = 'none';
-}
-
-function switchWatermark(variant) {
-  watermarkVariant = variant;
-  document.getElementById('tabMark1').classList.toggle('active', variant === '1mark');
-  document.getElementById('tabMark3').classList.toggle('active', variant === '3mark');
-}
-
-function updateFileName(inputId, msgId) {
-  const input = document.getElementById(inputId);
-  const msg = document.getElementById(msgId);
-  if (input.files.length > 0) {
-    msg.innerHTML = `✅ <strong>${input.files.length} file(s)</strong> selected successfully!`;
-  }
-}
-
-function updateProgress(percent, label) {
-  const container = document.getElementById('progressContainer');
-  container.style.display = 'block';
-  document.getElementById('progressBar').style.width = percent + '%';
-  document.getElementById('progressPercent').innerText = percent + '%';
-  document.getElementById('progressText').innerText = label;
-}
-
-function applyMarkupToPages(pdfDoc, font, header, footer, watermark, url, variant) {
-  const { rgb, degrees } = PDFLib;
-  const pages = pdfDoc.getPages();
-
-  for (let page of pages) {
-    const { width, height } = page.getSize();
-
-    const addLinkAnnotation = (rectCoords, targetUri) => {
-      const linkAnnot = pdfDoc.context.obj({
-        Type: 'Annot',
-        Subtype: 'Link',
-        Rect: rectCoords,
-        Border: [0, 0, 0],
-        A: {
-          Type: 'Action',
-          S: 'URI',
-          URI: PDFLib.PDFString.of(targetUri)
+      const wrapper = document.getElementById('pdfToolWrapper');
+      
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        const btn = document.getElementById('themeToggleBtn');
+        if (wrapper.getAttribute('data-theme') === 'dark') {
+          wrapper.setAttribute('data-theme', 'light');
+          btn.innerText = '🌙';
+        } else {
+          wrapper.setAttribute('data-theme', 'dark');
+          btn.innerText = '☀️';
         }
       });
 
-      const linkAnnotRef = pdfDoc.context.register(linkAnnot);
-      let annots = page.node.Annots();
-      if (!annots) {
-        page.node.set(PDFLib.PDFName.of('Annots'), pdfDoc.context.obj([linkAnnotRef]));
-      } else {
-        annots.push(linkAnnotRef);
-      }
-    };
+      const tabType1 = document.getElementById('tabType1');
+      const tabType2 = document.getElementById('tabType2');
+      const tabMark1 = document.getElementById('tabMark1');
+      const tabMark3 = document.getElementById('tabMark3');
+      const processBtn = document.getElementById('processBtn');
 
-    if (watermark) {
-      const wmSize = Math.min(width, height) / 17;
-      const textWidth = font.widthOfTextAtSize(watermark, wmSize);
-      const angleRad = (35 * Math.PI) / 180;
-      const centerX = (width - textWidth * Math.cos(angleRad)) / 2;
-      const shiftUpPts = 50;
+      tabType1.addEventListener('click', () => switchMode('type1'));
+      tabType2.addEventListener('click', () => switchMode('type2'));
+      tabMark1.addEventListener('click', () => switchWatermark('1mark'));
+      tabMark3.addEventListener('click', () => switchWatermark('3mark'));
+      processBtn.addEventListener('click', handleProcess);
 
-      if (variant === '1mark') {
-        const baseY = height * 0.45 + shiftUpPts;
-        const startY = baseY - (textWidth * Math.sin(angleRad)) / 2;
-        page.drawText(watermark, {
-          x: centerX,
-          y: startY,
-          size: wmSize,
-          font: font,
-          color: rgb(0.45, 0.45, 0.45),
-          rotate: degrees(35),
-          opacity: 0.30
-        });
-      } else {
-        const positionsY = [
-          height * 0.72 + shiftUpPts,
-          height * 0.45 + shiftUpPts,
-          height * 0.18 + shiftUpPts
-        ];
-        for (let baseY of positionsY) {
-          const startY = baseY - (textWidth * Math.sin(angleRad)) / 2;
-          page.drawText(watermark, {
-            x: centerX,
-            y: startY,
-            size: wmSize,
-            font: font,
-            color: rgb(0.45, 0.45, 0.45),
-            rotate: degrees(35),
-            opacity: 0.30
-          });
+      document.getElementById('pdfFiles').addEventListener('change', (e) => {
+        const msg = document.getElementById('pdfMsg');
+        if (e.target.files.length > 0) {
+          msg.innerHTML = `✅ <strong>${e.target.files.length} file(s)</strong> selected!`;
         }
-      }
-    }
-
-    if (header) {
-      const hSize = 10;
-      const hWidth = font.widthOfTextAtSize(header, hSize);
-      const hX = (width - hWidth) / 2;
-      const hY = height - 25;
-
-      page.drawText(header, {
-        x: hX,
-        y: hY,
-        size: hSize,
-        font: font,
-        color: rgb(0.0, 0.2, 0.8)
       });
 
-      page.drawLine({
-        start: { x: hX, y: hY - 3 },
-        end: { x: hX + hWidth, y: hY - 3 },
-        thickness: 1,
-        color: rgb(0.9, 0.1, 0.1)
+      document.getElementById('imageFiles').addEventListener('change', (e) => {
+        const msg = document.getElementById('imgMsg');
+        if (e.target.files.length > 0) {
+          msg.innerHTML = `✅ <strong>${e.target.files.length} file(s)</strong> selected!`;
+        }
+      });
+      
+      const btnFullscreen = document.getElementById("btnFullscreen");
+      btnFullscreen.addEventListener("click", () => {
+          if (!document.fullscreenElement) {
+              if (wrapper.requestFullscreen) wrapper.requestFullscreen();
+              else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
+              else if (wrapper.msRequestFullscreen) wrapper.msRequestFullscreen();
+          } else {
+              if (document.exitFullscreen) document.exitFullscreen();
+          }
       });
 
-      if (url) {
-        addLinkAnnotation([0, height - 142, width, height], url);
-      }
-    }
-
-    if (footer) {
-      const fSize = 10;
-      const fWidth = font.widthOfTextAtSize(footer, fSize);
-      const fX = (width - fWidth) / 2;
-      const fY = 22;
-
-      page.drawText(footer, {
-        x: fX,
-        y: fY,
-        size: fSize,
-        font: font,
-        color: rgb(0.0, 0.2, 0.8)
+      const btnRefresh = document.getElementById("btnRefresh");
+      btnRefresh.addEventListener("click", () => {
+         // reset the form inputs and state
+         document.getElementById('pdfFiles').value = '';
+         document.getElementById('imageFiles').value = '';
+         document.getElementById('pdfMsg').innerHTML = '📁 Tap ya Browse karke PDF select karein';
+         document.getElementById('imgMsg').innerHTML = '🖼️ Tap ya Browse karke Images select karein';
+         document.getElementById('downloadsContainer').innerHTML = '';
+         document.getElementById('fileList').style.display = 'none';
+         document.getElementById('status').innerText = '';
+         document.getElementById('progressContainer').style.display = 'none';
       });
 
-      page.drawLine({
-        start: { x: fX, y: fY - 3 },
-        end: { x: fX + fWidth, y: fY - 3 },
-        thickness: 1,
-        color: rgb(0.0, 0.2, 0.8)
-      });
 
-      if (url) {
-        addLinkAnnotation([0, 0, width, 142], url);
-      }
-    }
-  }
-}
-
-function loadImageAsJpegBytes(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-        canvas.toBlob(async (blob) => {
-          if (!blob) return reject(new Error('Image conversion failed'));
-          resolve(await blob.arrayBuffer());
-        }, 'image/jpeg', 0.92);
-      };
-      img.onerror = () => reject(new Error('Image load error: ' + file.name));
-      img.src = e.target.result;
-    };
-    reader.onerror = () => reject(new Error('File read error'));
-    reader.readAsDataURL(file);
-  });
-}
-
-async function handleProcess() {
-  if (currentMode === 'type1') {
-    await processPDFs();
-  } else {
-    await processImagesToPDF();
-  }
-}
-
-async function processPDFs() {
-  const fileInput = document.getElementById('pdfFiles');
-  const statusDiv = document.getElementById('status');
-  const downloadsContainer = document.getElementById('downloadsContainer');
-  const fileList = document.getElementById('fileList');
-  const btn = document.getElementById('processBtn');
-
-  if (!fileInput.files.length) {
-    statusDiv.className = 'error';
-    statusDiv.innerText = '⚠️ Kripya pehle kam se kam ek PDF file select karein!';
-    return;
-  }
-
-  const header = document.getElementById('headerText').value.trim();
-  const footer = document.getElementById('footerText').value.trim();
-  const watermark = document.getElementById('watermarkText').value.trim();
-  const url = document.getElementById('redirectUrl').value.trim();
-
-  btn.disabled = true;
-  statusDiv.className = '';
-  downloadsContainer.innerHTML = '';
-
-  try {
-    const { PDFDocument, StandardFonts } = PDFLib;
-    const totalFiles = fileInput.files.length;
-
-    for (let i = 0; i < totalFiles; i++) {
-      let file = fileInput.files[i];
-      let percentBase = Math.floor((i / totalFiles) * 100);
-      updateProgress(percentBase, `Reading ${file.name}...`);
-
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(arrayBuffer);
-      const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-      updateProgress(percentBase + Math.floor(40 / totalFiles), `Applying Markup to ${file.name}...`);
-      applyMarkupToPages(pdfDoc, font, header, footer, watermark, url, watermarkVariant);
-
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const downloadUrl = URL.createObjectURL(blob);
-      const targetFileName = `edited_${file.name}`;
-
-      const item = document.createElement('div');
-      item.className = 'download-item';
-      item.innerHTML = `
-        <span class="file-name-span"><strong>${file.name}</strong></span>
-        <a href="${downloadUrl}" download="${targetFileName}" class="download-btn">⬇️ Download PDF</a>
-      `;
-      downloadsContainer.appendChild(item);
-
-      if (totalFiles === 1) {
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = targetFileName;
-        a.click();
-      }
-    }
-
-    updateProgress(100, 'Processing Complete!');
-    fileList.style.display = 'block';
-    statusDiv.className = 'success';
-    statusDiv.innerText = '🎉 Saari PDFs successfully process ho chuki hain!';
-  } catch (err) {
-    console.error(err);
-    statusDiv.className = 'error';
-    statusDiv.innerText = '❌ Kuch gadbad hui: ' + err.message;
-    document.getElementById('progressContainer').style.display = 'none';
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-async function processImagesToPDF() {
-  const imageInput = document.getElementById('imageFiles');
-  const statusDiv = document.getElementById('status');
-  const downloadsContainer = document.getElementById('downloadsContainer');
-  const fileList = document.getElementById('fileList');
-  const btn = document.getElementById('processBtn');
-
-  if (!imageInput.files.length) {
-    statusDiv.className = 'error';
-    statusDiv.innerText = '⚠️ Kripya pehle kam se kam ek Image select karein!';
-    return;
-  }
-
-  const header = document.getElementById('headerText').value.trim();
-  const footer = document.getElementById('footerText').value.trim();
-  const watermark = document.getElementById('watermarkText').value.trim();
-  const url = document.getElementById('redirectUrl').value.trim();
-  let outputName = document.getElementById('outputPdfName').value.trim() || 'Msbu_Study_Material.pdf';
-  if (!outputName.toLowerCase().endsWith('.pdf')) {
-    outputName += '.pdf';
-  }
-
-  btn.disabled = true;
-  statusDiv.className = '';
-  downloadsContainer.innerHTML = '';
-
-  try {
-    const { PDFDocument, StandardFonts } = PDFLib;
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-    const A4_WIDTH = 595.28;
-    const A4_HEIGHT = 841.89;
-    const topBottomMargin = 40;
-    const sideMargin = 20;
-    const totalImgs = imageInput.files.length;
-
-    for (let i = 0; i < totalImgs; i++) {
-      let file = imageInput.files[i];
-      let percent = Math.floor(((i + 1) / totalImgs) * 70);
-      updateProgress(percent, `Converting Image ${i + 1} of ${totalImgs}...`);
-
-      const jpegBytes = await loadImageAsJpegBytes(file);
-      const embeddedImage = await pdfDoc.embedJpg(jpegBytes);
-
-      const page = pdfDoc.addPage([A4_WIDTH, A4_HEIGHT]);
-      const maxWidth = A4_WIDTH - sideMargin * 2;
-      const maxHeight = A4_HEIGHT - topBottomMargin * 2;
-      const imgDims = embeddedImage.scaleToFit(maxWidth, maxHeight);
-      const x = (A4_WIDTH - imgDims.width) / 2;
-      const y = (A4_HEIGHT - imgDims.height) / 2;
-
-      page.drawImage(embeddedImage, { x, y, width: imgDims.width, height: imgDims.height });
-    }
-
-    updateProgress(85, 'Applying Watermark, Header & Footer...');
-    applyMarkupToPages(pdfDoc, font, header, footer, watermark, url, watermarkVariant);
-
-    updateProgress(95, 'Generating PDF file...');
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-    const downloadUrl = URL.createObjectURL(blob);
-
-    const item = document.createElement('div');
-    item.className = 'download-item';
-    item.innerHTML = `
-      <span class="file-name-span"><strong>${outputName}</strong> (${totalImgs} Pages)</span>
-      <a href="${downloadUrl}" download="${outputName}" class="download-btn">⬇️ Download PDF</a>
-    `;
-    downloadsContainer.appendChild(item);
-
-    const a = document.createElement('a');
-    a.href = downloadUrl;
-    a.download = outputName;
-    a.click();
-
-    updateProgress(100, 'Complete!');
-    fileList.style.display = 'block';
-    statusDiv.className = 'success';
-    statusDiv.innerText = '🎉 Images se PDF successfully ban gayi hai!';
-  } catch (err) {
-    console.error(err);
-    statusDiv.className = 'error';
-    statusDiv.innerText = '❌ Kuch gadbad hui: ' + err.message;
-    document.getElementById('progressContainer').style.display = 'none';
-  } finally {
-    btn.disabled = false;
-  }
-}
-</script>
-
-</body>
-</html>
+      function switchMode(mode) {
+        currentMode = mode;
+        tabType1.classList.toggle('active', mode === 'type1');
+        tabType2.classList.toggle('active', mode === 'type2');
+        document.getElementById('pdfInputGroup').style.display = mode === 'type1' ? 'block' : 'none';
+ 
