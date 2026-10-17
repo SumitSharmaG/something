@@ -1,10 +1,473 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retro Nokia Snake starter workspace | Sumit Sharma Tools</title><meta name="description" content="Nonfunctional starter workspace for Retro Nokia Snake; explains the implementation still required.">
-<link rel="canonical" href="https://thesumitsharma.in/tools/retro-nokia-snake/app.html"><meta property="og:type" content="website"><meta property="og:title" content="Retro Nokia Snake starter workspace | Sumit Sharma Tools"><meta property="og:description" content="Nonfunctional starter workspace for Retro Nokia Snake; explains the implementation still required."><meta property="og:url" content="https://thesumitsharma.in/tools/retro-nokia-snake/app.html">
-<meta name="theme-color" content="#f7f5ef"><link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg"><link rel="stylesheet" href="../../assets/site.css"><script defer src="../../assets/site.js"></script></head>
-<body><a class="skip-link" href="#main">Skip to content</a>
-<header class="topbar"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
-<nav class="nav" id="primary-nav" aria-label="Main navigation"><a href="../../index.html#tools">Tools</a><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></nav></header>
-<main class="content-shell workspace-shell" id="main"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>Retro Nokia Snake</span></nav><section class="workspace-heading"><p class="kicker">STARTER WORKSPACE / NOT FUNCTIONAL</p><h1>Retro Nokia Snake</h1><p class="article-lead">This is a nonfunctional starter page. It has no working retro nokia snake controls, processing, audio, game loop or saved state.</p><a class="subtle-link" href="./">Read the project guide ←</a></section><section class="placeholder-panel" aria-label="Nonfunctional workspace placeholder"><div class="placeholder-top"><span>WORKSPACE PREVIEW</span><span class="status-tag">NOT IMPLEMENTED</span></div><div class="placeholder-art"><span class="placeholder-symbol">08</span><div><strong>Work in progress</strong><p>This area intentionally contains no pretend interactive controls.</p></div></div><div class="placeholder-foot">Starter shell · No data submitted · No tool functionality</div></section><section class="build-notes"><div><p class="kicker">Next implementation</p><h2>What a complete version still needs</h2></div><ul><li>A modern browser</li><li>A completed version should provide arrow/WASD controls, touch controls for smaller screens, pause, restart and reduced-motion consideration</li><li>Accessible states, meaningful error handling and mobile interaction.</li></ul></section></main><footer class="footer"><div class="footer-main"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><p>A maker's shelf of practical tools, learning and experiments.</p></div><nav class="footer-nav" aria-label="Legal and information"><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a href="../../privacy-policy.html">Privacy</a><a href="../../terms.html">Terms</a><a href="../../disclaimer.html">Disclaimer</a></nav><small>© 2026 Sumit Sharma · Independent projects</small></footer>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <title>Retro Nokia Snake | Sumit Sharma Tools</title>
+  <meta name="description" content="Play the retro classic Nokia Snake game with multi-themes, custom emojis, and speed controls.">
+  <link rel="canonical" href="https://thesumitsharma.in/tools/retro-nokia-snake/app.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Retro Nokia Snake | Sumit Sharma Tools">
+  <meta property="og:description" content="Play the retro classic Nokia Snake game with multi-themes, custom emojis, and speed controls.">
+  <meta property="og:url" content="https://thesumitsharma.in/tools/retro-nokia-snake/app.html">
+  <meta name="theme-color" content="#f7f5ef">
+  
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/site.js"></script>
+
+  <!-- Scoped CSS for the Snake Game -->
+  <style>
+    /* Scoped Variables for Theme */
+    .snake-tool-wrapper {
+        --bg-color: #0a0a0a;
+        --phone-bg: #1a202c;
+        --field-bg: #000;
+        --text-color: #fff;
+        --border-color: #ff0000;
+        --accent: #ff0000;
+
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border-radius: 16px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 650px;
+        margin: 24px 0 40px 0;
+        padding: 40px 15px;
+        font-family: 'Courier New', Courier, monospace;
+        touch-action: none;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    /* Theme Classes Scoped */
+    .snake-tool-wrapper.theme-dark { --bg-color: #0a0a0a; --field-bg: #000; --text-color: #fff; --border-color: #444; --accent: #fff; }
+    .snake-tool-wrapper.theme-light { --bg-color: #f0f0f0; --field-bg: #fff; --text-color: #000; --border-color: #ccc; --accent: #000; }
+    .snake-tool-wrapper.theme-neon { --bg-color: #000; --field-bg: #050505; --text-color: #39FF14; --border-color: #39FF14; --accent: #39FF14; }
+    .snake-tool-wrapper.theme-cyberpunk { --bg-color: #000; --field-bg: #000b1a; --text-color: #00ffff; --border-color: #ff00ff; --accent: #ff00ff; }
+
+    .snake-tool-wrapper *, .snake-tool-wrapper *::before, .snake-tool-wrapper *::after {
+        box-sizing: border-box;
+    }
+
+    .snake-tool-wrapper .ui-layer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px;
+        width: 310px;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .snake-tool-wrapper .phone-frame {
+        background: var(--phone-bg);
+        padding: 15px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px var(--border-color);
+        text-align: center;
+        position: relative;
+    }
+
+    .snake-tool-wrapper #game-container {
+        background-color: var(--field-bg);
+        border: 4px solid var(--border-color);
+        position: relative;
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
+        transition: border 0.3s;
+        margin: 0 auto;
+    }
+
+    .snake-tool-wrapper canvas { 
+        display: block; 
+    }
+
+    .snake-tool-wrapper .btn-group {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .snake-tool-wrapper button.small-btn {
+        background: #222;
+        color: white;
+        border: 1px solid #444;
+        padding: 6px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-family: inherit;
+        transition: 0.2s;
+    }
+    
+    .snake-tool-wrapper button.small-btn:hover {
+        background: #444;
+    }
+
+    .snake-tool-wrapper #overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+    }
+
+    .snake-tool-wrapper input, .snake-tool-wrapper select {
+        padding: 8px; margin: 5px; 
+        background: #111; color: white;
+        border: 1px solid var(--border-color); 
+        text-align: center;
+        font-family: inherit;
+    }
+
+    .snake-tool-wrapper .controls-grid {
+        margin-top: 15px;
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .snake-tool-wrapper .ctrl-btn {
+        background: #222; color: white; border: 2px solid var(--border-color);
+        height: 55px; border-radius: 50%; font-size: 22px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+    }
+
+    .snake-tool-wrapper .ctrl-btn:active {
+        background: #444;
+    }
+
+    .snake-tool-wrapper .footer-dev { margin-top: 20px; font-size: 12px; }
+    .snake-tool-wrapper .footer-dev a { color: var(--text-color); text-decoration: none; font-weight: bold; border-bottom: 1px dashed; }
+
+    /* EDGE BUTTONS (BACK & FULLSCREEN) */
+    .snake-tool-wrapper .edge-buttons {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .snake-tool-wrapper .edge-btn {
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: var(--text-color);
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        transition: 0.2s;
+        backdrop-filter: blur(5px);
+        font-weight: bold;
+    }
+    
+    .snake-tool-wrapper .edge-btn:hover { 
+        background: rgba(255,255,255,0.3); 
+        transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  
+  <header class="topbar">
+    <a class="wordmark" href="../../index.html">
+      <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav class="nav" id="primary-nav" aria-label="Main navigation">
+      <a href="../../index.html#tools">Tools</a>
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main class="content-shell workspace-shell" id="main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>Retro Nokia Snake</span>
+    </nav>
+
+    <section class="workspace-heading">
+      <p class="kicker">ACTIVE WORKSPACE</p>
+      <h1>Retro Nokia Snake</h1>
+      <p class="article-lead">Enjoy the classic snake game! Customize your emojis, choose your theme, and swipe or use buttons to play. Fullscreen mode available for better experience.</p>
+      <a class="subtle-link" href="./">Read the project guide ←</a>
+    </section>
+
+    <!-- SNAKE TOOL INTEGRATION -->
+    <section class="snake-tool-wrapper theme-dark" id="snakeToolWrapper">
+      
+      <!-- Edge Buttons -->
+      <div class="edge-buttons">
+          <button class="edge-btn" id="btnEdgeBack" title="Back to Menu">←</button>
+          <button class="edge-btn" id="btnEdgeFs" title="Toggle Fullscreen">⛶</button>
+      </div>
+
+      <div class="ui-layer">
+          <div id="pNameDisp">Guest</div>
+          <div>🍎: <span id="scoreVal">0</span></div>
+          <div>🏆: <span id="highScoreVal">0</span></div>
+      </div>
+
+      <div class="phone-frame">
+          <div id="game-container">
+              <div id="overlay">
+                  <h2 style="color:var(--border-color); margin-top:0;">SNAKE EMOJI</h2>
+                  <input type="text" id="playerName" placeholder="Name" maxlength="8">
+                  <input type="text" id="headEmoji" placeholder="Head (🐍)" maxlength="2">
+                  <input type="text" id="tailEmoji" placeholder="Body (🟢)" maxlength="2">
+                  <div style="margin: 10px 0;">
+                      <select id="levelSelect">
+                          <option value="250">EASY</option>
+                          <option value="130" selected>NORMAL</option>
+                          <option value="70">HARD</option>
+                      </select>
+                  </div>
+                  <button class="small-btn" id="btnStart" style="padding: 10px 20px; font-size: 14px; background: var(--accent); color:#000; font-weight:bold;">START GAME</button>
+              </div>
+              <canvas id="snakeGame" width="300" height="300"></canvas>
+          </div>
+
+          <div class="btn-group">
+              <button class="small-btn" onclick="setTheme('theme-dark')">Dark</button>
+              <button class="small-btn" onclick="setTheme('theme-light')">Light</button>
+              <button class="small-btn" onclick="setTheme('theme-neon')">Neon</button>
+              <button class="small-btn" onclick="setTheme('theme-cyberpunk')">Cyber</button>
+          </div>
+
+          <div class="btn-group">
+              <button class="small-btn" style="background:orange; color:#000; font-weight:bold;" onclick="togglePause()">Pause</button>
+              <button class="small-btn" style="background:red; font-weight:bold;" onclick="triggerRestart()">Restart</button>
+              <!-- Inside menu button works same as the top edge back button -->
+              <button class="small-btn" onclick="goBack()">Menu</button>
+          </div>
+
+          <div class="controls-grid">
+              <button class="ctrl-btn" style="grid-column: 2" onmousedown="changeDir('UP')" ontouchstart="changeDir('UP')">▲</button>
+              <button class="ctrl-btn" style="grid-column: 1" onmousedown="changeDir('LEFT')" ontouchstart="changeDir('LEFT')">◀</button>
+              <button class="ctrl-btn" style="grid-column: 2" onmousedown="changeDir('DOWN')" ontouchstart="changeDir('DOWN')">▼</button>
+              <button class="ctrl-btn" style="grid-column: 3" onmousedown="changeDir('RIGHT')" ontouchstart="changeDir('RIGHT')">▶</button>
+          </div>
+      </div>
+
+      <div class="footer-dev">
+          <a href="https://www.instagram.com/sumitt__sharma?igsh=eHYwcDFnZzRuamV1" target="_blank">DEVELOPED BY ISMIT 😊</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-main">
+      <a class="wordmark" href="../../index.html">
+        <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+      </a>
+      <p>A maker's shelf of practical tools, learning and experiments.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Legal and information">
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a href="../../privacy-policy.html">Privacy</a>
+      <a href="../../terms.html">Terms</a>
+      <a href="../../disclaimer.html">Disclaimer</a>
+    </nav>
+    <small>© 2026 Sumit Sharma · Independent projects</small>
+  </footer>
+
+  <!-- Snake Logic Script -->
+  <script>
+    const canvas = document.getElementById("snakeGame");
+    const ctx = canvas.getContext("2d");
+    const box = 20;
+    let snake, food, score, d, gameLoop, speed, isPaused = false;
+    let headChar = "🐍", tailChar = "🟢";
+    let nextDir = "RIGHT";
+
+    const wrapper = document.getElementById('snakeToolWrapper');
+
+    // Retrieve high score on load
+    document.addEventListener("DOMContentLoaded", () => {
+        let hi = localStorage.getItem("snakeHi") || 0;
+        document.getElementById("highScoreVal").innerText = hi;
+        
+        // Button Listeners
+        document.getElementById("btnStart").addEventListener("click", confirmAndStart);
+        document.getElementById("btnEdgeBack").addEventListener("click", goBack);
+        
+        const btnFs = document.getElementById("btnEdgeFs");
+        btnFs.addEventListener("click", () => {
+            if (!document.fullscreenElement) {
+                if (wrapper.requestFullscreen) wrapper.requestFullscreen();
+                else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
+                else if (wrapper.msRequestFullscreen) wrapper.msRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        });
+    });
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(f, d_time) {
+        if (isPaused) return;
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + d_time);
+    }
+
+    // Accessible globally for inline onClick triggers
+    window.setTheme = function(t) { 
+        wrapper.className = "snake-tool-wrapper " + t; 
+    }
+
+    window.changeDir = function(newD) {
+        if(newD === 'LEFT' && d !== 'RIGHT') nextDir = 'LEFT';
+        if(newD === 'UP' && d !== 'DOWN') nextDir = 'UP';
+        if(newD === 'RIGHT' && d !== 'LEFT') nextDir = 'RIGHT';
+        if(newD === 'DOWN' && d !== 'UP') nextDir = 'DOWN';
+    }
+
+    window.togglePause = function() {
+        isPaused = !isPaused;
+    }
+    
+    window.triggerRestart = function() {
+        resetGame();
+    }
+
+    window.goBack = function() { 
+        clearInterval(gameLoop); 
+        document.getElementById("overlay").style.display = "flex"; 
+    }
+
+    // Keyboard Controls
+    document.addEventListener("keydown", (e) => {
+        if([37, 65].includes(e.keyCode)) changeDir('LEFT'); // Left / A
+        if([38, 87].includes(e.keyCode)) changeDir('UP');   // Up / W
+        if([39, 68].includes(e.keyCode)) changeDir('RIGHT'); // Right / D
+        if([40, 83].includes(e.keyCode)) changeDir('DOWN'); // Down / S
+    });
+
+    // Gesture control (Touch)
+    let touchStartX, touchStartY;
+    canvas.addEventListener('touchstart', e => { 
+        touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; 
+        e.preventDefault();
+    }, {passive: false});
+    
+    canvas.addEventListener('touchmove', e => {
+        if (!touchStartX || !touchStartY) return;
+        let dx = touchStartX - e.touches[0].clientX;
+        let dy = touchStartY - e.touches[0].clientY;
+        if (Math.abs(dx) > Math.abs(dy)) changeDir(dx > 0 ? 'LEFT' : 'RIGHT');
+        else changeDir(dy > 0 ? 'UP' : 'DOWN');
+        touchStartX = null; touchStartY = null;
+        e.preventDefault();
+    }, {passive: false});
+
+    function confirmAndStart() {
+        headChar = document.getElementById("headEmoji").value || "🐍";
+        tailChar = document.getElementById("tailEmoji").value || "🟢";
+        document.getElementById("pNameDisp").innerText = document.getElementById("playerName").value || "Guest";
+        document.getElementById("overlay").style.display = "none";
+        speed = parseInt(document.getElementById("levelSelect").value);
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        resetGame();
+    }
+
+    function resetGame() {
+        snake = [{ x: 6 * box, y: 6 * box }];
+        score = 0; d = "RIGHT"; nextDir = "RIGHT"; isPaused = false;
+        document.getElementById("scoreVal").innerText = score;
+        spawnFood();
+        if(gameLoop) clearInterval(gameLoop);
+        gameLoop = setInterval(draw, speed);
+    }
+
+    function spawnFood() { 
+        food = { x: Math.floor(Math.random() * 15) * box, y: Math.floor(Math.random() * 15) * box }; 
+    }
+
+    function draw() {
+        if(isPaused) return;
+        d = nextDir;
+        
+        // Get the background color of the field dynamically based on active theme
+        ctx.fillStyle = getComputedStyle(wrapper).getPropertyValue('--field-bg').trim();
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = "18px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        for(let i = 0; i < snake.length; i++) {
+            ctx.fillText(i === 0 ? headChar : tailChar, snake[i].x + box/2, snake[i].y + box/2);
+        }
+
+        ctx.fillText("🍎", food.x + box/2, food.y + box/2);
+
+        let hX = snake[0].x, hY = snake[0].y;
+        if(d == "LEFT") hX -= box; else if(d == "UP") hY -= box;
+        else if(d == "RIGHT") hX += box; else if(d == "DOWN") hY += box;
+
+        if (hX < 0) hX = canvas.width - box; else if (hX >= canvas.width) hX = 0;
+        if (hY < 0) hY = canvas.height - box; else if (hY >= canvas.height) hY = 0;
+
+        playSound(150, 0.01);
+
+        if(hX == food.x && hY == food.y) {
+            score++;
+            document.getElementById("scoreVal").innerText = score;
+            playSound(600, 0.05);
+            // Flash Effect
+            canvas.style.borderColor = "#fff";
+            setTimeout(() => canvas.style.borderColor = "var(--border-color)", 100);
+            spawnFood();
+        } else { snake.pop(); }
+
+        let head = { x: hX, y: hY };
+        if(snake.some(s => s.x === head.x && s.y === head.y)) {
+            clearInterval(gameLoop);
+            playSound(100, 0.5);
+            alert("GAME OVER! Score: " + score);
+            let hi = localStorage.getItem("snakeHi") || 0;
+            if(score > hi) {
+                localStorage.setItem("snakeHi", score);
+                document.getElementById("highScoreVal").innerText = score;
+            }
+            goBack();
+        }
+        snake.unshift(head);
+    }
+  </script>
+</body>
+</html>
