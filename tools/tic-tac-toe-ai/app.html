@@ -1,10 +1,513 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tic-Tac-Toe AI starter workspace | Sumit Sharma Tools</title><meta name="description" content="Nonfunctional starter workspace for Tic-Tac-Toe AI; explains the implementation still required.">
-<link rel="canonical" href="https://thesumitsharma.in/tools/tic-tac-toe-ai/app.html"><meta property="og:type" content="website"><meta property="og:title" content="Tic-Tac-Toe AI starter workspace | Sumit Sharma Tools"><meta property="og:description" content="Nonfunctional starter workspace for Tic-Tac-Toe AI; explains the implementation still required."><meta property="og:url" content="https://thesumitsharma.in/tools/tic-tac-toe-ai/app.html">
-<meta name="theme-color" content="#f7f5ef"><link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg"><link rel="stylesheet" href="../../assets/site.css"><script defer src="../../assets/site.js"></script></head>
-<body><a class="skip-link" href="#main">Skip to content</a>
-<header class="topbar"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
-<nav class="nav" id="primary-nav" aria-label="Main navigation"><a href="../../index.html#tools">Tools</a><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a></nav></header>
-<main class="content-shell workspace-shell" id="main"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>Tic-Tac-Toe AI</span></nav><section class="workspace-heading"><p class="kicker">STARTER WORKSPACE / NOT FUNCTIONAL</p><h1>Tic-Tac-Toe AI</h1><p class="article-lead">This is a nonfunctional starter page. It has no working tic-tac-toe ai controls, processing, audio, game loop or saved state.</p><a class="subtle-link" href="./">Read the project guide ←</a></section><section class="placeholder-panel" aria-label="Nonfunctional workspace placeholder"><div class="placeholder-top"><span>WORKSPACE PREVIEW</span><span class="status-tag">NOT IMPLEMENTED</span></div><div class="placeholder-art"><span class="placeholder-symbol">XO</span><div><strong>Work in progress</strong><p>This area intentionally contains no pretend interactive controls.</p></div></div><div class="placeholder-foot">Starter shell · No data submitted · No tool functionality</div></section><section class="build-notes"><div><p class="kicker">Next implementation</p><h2>What a complete version still needs</h2></div><ul><li>A modern browser</li><li>A future implementation needs board state, legal-move validation, draw and win checks, an opponent strategy, and keyboard/screen-reader support</li><li>Accessible states, meaningful error handling and mobile interaction.</li></ul></section></main><footer class="footer"><div class="footer-main"><a class="wordmark" href="../../index.html"><span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span></a><p>A maker's shelf of practical tools, learning and experiments.</p></div><nav class="footer-nav" aria-label="Legal and information"><a href="../../about.html">About</a><a href="../../contact.html">Contact</a><a href="../../privacy-policy.html">Privacy</a><a href="../../terms.html">Terms</a><a href="../../disclaimer.html">Disclaimer</a></nav><small>© 2026 Sumit Sharma · Independent projects</small></footer>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tic-Tac-Toe AI | Sumit Sharma Tools</title>
+  <meta name="description" content="Ultimate Neon Tic-Tac-Toe AI Workspace. Play against AI or PvP.">
+  <link rel="canonical" href="https://thesumitsharma.in/tools/tic-tac-toe-ai/app.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tic-Tac-Toe AI | Sumit Sharma Tools">
+  <meta property="og:description" content="Ultimate Neon Tic-Tac-Toe AI Workspace. Play against AI or PvP.">
+  <meta property="og:url" content="https://thesumitsharma.in/tools/tic-tac-toe-ai/app.html">
+  <meta name="theme-color" content="#f7f5ef">
+  
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/site.js"></script>
+
+  <!-- Scoped CSS for the Tic-Tac-Toe Game -->
+  <style>
+    /* Scoped Variables for Game Wrapper */
+    .tictactoe-wrapper {
+        --bg: #0b0b0b;
+        --panel: #141414;
+        --cell: #1f1f1f;
+        --accent: #b07a3f;
+        --x: #00fff7;
+        --o: #ffae00;
+        --glow: 0 0 15px;
+
+        background: radial-gradient(circle, var(--panel), var(--bg));
+        border-radius: 16px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 550px;
+        margin: 24px 0 40px 0;
+        padding: 20px;
+        color: white;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    /* NEON THEME */
+    .tictactoe-wrapper.neon {
+        --bg: #050014;
+        --panel: #0c0030;
+        --cell: #13004f;
+        --accent: #00fff7;
+        --x: #00fff7;
+        --o: #ff00ff;
+    }
+
+    /* PURPLE THEME */
+    .tictactoe-wrapper.purple {
+        --bg: #100014;
+        --panel: #200030;
+        --cell: #2b004f;
+        --accent: #b56cff;
+        --x: #b56cff;
+        --o: #ff77ff;
+    }
+
+    .tictactoe-wrapper * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .tictactoe-wrapper .container {
+        width: 100%;
+        max-width: 420px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .tictactoe-wrapper .card {
+        background: rgba(255,255,255,0.04);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 25px 50px rgba(0,0,0,.8);
+        text-align: center;
+        animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .tictactoe-wrapper .hidden { display: none !important; }
+
+    .tictactoe-wrapper h2 {
+        margin-top: 0;
+        color: var(--accent);
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    /* BUTTONS */
+    .tictactoe-wrapper button.game-btn {
+        width: 100%;
+        padding: 14px;
+        margin-top: 12px;
+        border: none;
+        border-radius: 14px;
+        background: var(--accent);
+        color: #000;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .tictactoe-wrapper button.game-btn:hover {
+        transform: scale(1.04);
+        box-shadow: 0 0 20px var(--accent);
+    }
+
+    /* HEADER */
+    .tictactoe-wrapper .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tictactoe-wrapper .icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--cell);
+        color: var(--accent);
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .tictactoe-wrapper .icon-btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* SCORE */
+    .tictactoe-wrapper .score {
+        display: flex;
+        justify-content: space-between;
+        margin: 15px 0;
+        font-size: 16px;
+        font-weight: 600;
+        opacity: .9;
+    }
+
+    /* BOARD */
+    .tictactoe-wrapper .board {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .tictactoe-wrapper .cell {
+        aspect-ratio: 1;
+        background: var(--cell);
+        border-radius: 15px;
+        font-size: 48px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: .2s;
+        font-weight: bold;
+    }
+
+    .tictactoe-wrapper .cell:hover {
+        transform: scale(1.05);
+    }
+
+    .tictactoe-wrapper .cell.x {
+        color: var(--x);
+        text-shadow: var(--glow) var(--x);
+    }
+
+    .tictactoe-wrapper .cell.o {
+        color: var(--o);
+        text-shadow: var(--glow) var(--o);
+    }
+
+    .tictactoe-wrapper .win {
+        animation: blink .8s infinite;
+    }
+
+    @keyframes blink {
+        50% { background: var(--accent); color: #000; text-shadow: none; }
+    }
+
+    /* EDGE BUTTONS (BACK & FULLSCREEN) */
+    .tictactoe-wrapper .edge-buttons {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+    }
+
+    .tictactoe-wrapper .edge-btn {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        text-decoration: none;
+        transition: 0.2s;
+        backdrop-filter: blur(5px);
+        font-weight: bold;
+    }
+    
+    .tictactoe-wrapper .edge-btn:hover { 
+        background: rgba(255,255,255,0.2); 
+        transform: scale(1.05);
+    }
+
+    /* MOBILE ADJUSTMENTS */
+    @media(max-width:400px){
+        .tictactoe-wrapper .cell{ font-size:38px; }
+        .tictactoe-wrapper { min-height: 500px; padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  
+  <header class="topbar">
+    <a class="wordmark" href="../../index.html">
+      <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+    </a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav class="nav" id="primary-nav" aria-label="Main navigation">
+      <a href="../../index.html#tools">Tools</a>
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a class="github-link" href="https://github.com/sumitsharmag" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main class="content-shell workspace-shell" id="main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a><span aria-hidden="true">/</span><span>Tic-Tac-Toe AI</span>
+    </nav>
+
+    <section class="workspace-heading">
+      <p class="kicker">ACTIVE WORKSPACE</p>
+      <h1>Ultimate Tic-Tac-Toe AI</h1>
+      <p class="article-lead">Play our ultimate neon-themed Tic-Tac-Toe. Challenge the unbeatable AI or play against a friend. Use the full-screen button for the best experience.</p>
+      <a class="subtle-link" href="./">Read the project guide ←</a>
+    </section>
+
+    <!-- CENTERED GAME WRAPPER -->
+    <div class="tictactoe-wrapper" id="gameWrapper">
+      
+      <!-- Back & Fullscreen Edge Buttons -->
+      <div class="edge-buttons">
+          <!-- Class hidden added initially so it doesn't show on start screen -->
+          <button class="edge-btn hidden" id="btnBack" title="Change Mode">←</button>
+          <button class="edge-btn" id="btnFullscreen" title="Toggle Fullscreen">⛶</button>
+      </div>
+      
+      <div class="container">
+        <!-- START SCREEN -->
+        <div class="card" id="startScreen">
+            <h2>⚡ Tic Tac Toe</h2>
+            <button class="game-btn" id="btnPvp">Player vs Player</button>
+            <button class="game-btn" id="btnAi">Player vs AI</button>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div class="card hidden" id="gameScreen">
+            <div class="header">
+                <div id="statusText" style="font-weight: bold; font-size: 18px;">Player X</div>
+                <button class="icon-btn" id="btnTheme" title="Change Theme">🎨</button>
+            </div>
+
+            <div class="score">
+                <div>X: <span id="sx">0</span></div>
+                <div>Draw: <span id="sd">0</span></div>
+                <div>O: <span id="so">0</span></div>
+            </div>
+
+            <div class="board" id="gameBoard"></div>
+
+            <button class="game-btn" id="btnRestart">Restart Game</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-main">
+      <a class="wordmark" href="../../index.html">
+        <span class="mark">SS</span><span>Sumit Sharma <em>/ tools</em></span>
+      </a>
+      <p>A maker's shelf of practical tools, learning and experiments.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Legal and information">
+      <a href="../../about.html">About</a>
+      <a href="../../contact.html">Contact</a>
+      <a href="../../privacy-policy.html">Privacy</a>
+      <a href="../../terms.html">Terms</a>
+      <a href="../../disclaimer.html">Disclaimer</a>
+    </nav>
+    <small>© 2026 Sumit Sharma · Independent projects</small>
+  </footer>
+
+  <!-- Tic-Tac-Toe Logic Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      let board = Array(9).fill("");
+      let current = "X";
+      let active = true;
+      let mode = "pvp";
+      let sx = 0, so = 0, sd = 0;
+      let themes = ["", "neon", "purple"];
+      let t = 0;
+
+      const wins = [
+       [0,1,2],[3,4,5],[6,7,8],
+       [0,3,6],[1,4,7],[2,5,8],
+       [0,4,8],[2,4,6]
+      ];
+
+      // DOM Elements
+      const gameWrapper = document.getElementById("gameWrapper");
+      const startScreen = document.getElementById("startScreen");
+      const gameScreen = document.getElementById("gameScreen");
+      const statusText = document.getElementById("statusText");
+      const gameBoard = document.getElementById("gameBoard");
+      const sxEl = document.getElementById("sx");
+      const soEl = document.getElementById("so");
+      const sdEl = document.getElementById("sd");
+      const btnFullscreen = document.getElementById("btnFullscreen");
+      const btnBack = document.getElementById("btnBack");
+
+      // Event Listeners setup
+      document.getElementById("btnPvp").addEventListener("click", () => startGame("pvp"));
+      document.getElementById("btnAi").addEventListener("click", () => startGame("ai"));
+      document.getElementById("btnTheme").addEventListener("click", changeTheme);
+      document.getElementById("btnRestart").addEventListener("click", resetBoard);
+      
+      // GO BACK TO MODE SELECTION
+      btnBack.addEventListener("click", () => {
+        gameScreen.classList.add("hidden");
+        startScreen.classList.remove("hidden");
+        btnBack.classList.add("hidden"); // Hide back button on start screen
+      });
+      
+      // Fullscreen Logic
+      btnFullscreen.addEventListener("click", () => {
+        if (!document.fullscreenElement) {
+          if (gameWrapper.requestFullscreen) {
+            gameWrapper.requestFullscreen();
+          } else if (gameWrapper.webkitRequestFullscreen) { /* Safari */
+            gameWrapper.webkitRequestFullscreen();
+          } else if (gameWrapper.msRequestFullscreen) { /* IE11 */
+            gameWrapper.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+          }
+        }
+      });
+
+      function startGame(m) {
+        mode = m;
+        startScreen.classList.add("hidden");
+        gameScreen.classList.remove("hidden");
+        btnBack.classList.remove("hidden"); // Show back button during game
+        
+        // Reset Score when changing mode
+        sx = 0; so = 0; sd = 0;
+        updateScore();
+        
+        resetBoard();
+      }
+
+      function resetBoard() {
+        board.fill("");
+        active = true;
+        current = "X";
+        statusText.innerText = "Player X";
+        gameBoard.innerHTML = "";
+        
+        for (let i = 0; i < 9; i++) {
+          let c = document.createElement("div");
+          c.className = "cell";
+          c.addEventListener("click", () => handleMove(i));
+          gameBoard.appendChild(c);
+        }
+      }
+
+      function handleMove(i) {
+        if (!active || board[i]) return;
+        board[i] = current;
+        let c = gameBoard.children[i];
+        c.innerText = current;
+        c.classList.add(current.toLowerCase());
+
+        let winLine = checkWin();
+        if (winLine) {
+          winLine.forEach(idx => gameBoard.children[idx].classList.add("win"));
+          active = false;
+          statusText.innerText = current + " Wins! 🎉";
+          current == "X" ? sx++ : so++;
+          updateScore();
+          return;
+        }
+
+        if (!board.includes("")) {
+          sd++; 
+          updateScore();
+          statusText.innerText = "Draw! 🤝";
+          active = false; 
+          return;
+        }
+
+        current = current == "X" ? "O" : "X";
+        statusText.innerText = "Player " + current;
+
+        if (mode == "ai" && current == "O") {
+          setTimeout(aiMove, 400);
+        }
+      }
+
+      function aiMove() {
+        let best = -Infinity, move;
+        for (let i = 0; i < 9; i++) {
+          if (!board[i]) {
+            board[i] = "O";
+            let s = minimax(board, 0, false);
+            board[i] = "";
+            if (s > best) { best = s; move = i; }
+          }
+        }
+        if(move != null) handleMove(move);
+      }
+
+      function minimax(b, d, isMax) {
+        let r = evaluate();
+        if (r !== null) return r;
+        
+        if (isMax) {
+          let best = -Infinity;
+          for (let i = 0; i < 9; i++) {
+            if (!b[i]) {
+              b[i] = "O"; 
+              best = Math.max(best, minimax(b, d + 1, false)); 
+              b[i] = "";
+            }
+          }
+          return best;
+        } else {
+          let best = Infinity;
+          for (let i = 0; i < 9; i++) {
+            if (!b[i]) {
+              b[i] = "X"; 
+              best = Math.min(best, minimax(b, d + 1, true)); 
+              b[i] = "";
+            }
+          }
+          return best;
+        }
+      }
+
+      function evaluate() {
+        for (let w of wins) {
+          let [a, b, c] = w;
+          if (board[a] && board[a] == board[b] && board[a] == board[c])
+            return board[a] == "O" ? 10 : -10;
+        }
+        if (!board.includes("")) return 0;
+        return null;
+      }
+
+      function checkWin() {
+        return wins.find(w => w.every(i => board[i] == current));
+      }
+
+      function updateScore() {
+        sxEl.innerText = sx; 
+        soEl.innerText = so; 
+        sdEl.innerText = sd;
+      }
+
+      function changeTheme() {
+        t = (t + 1) % themes.length;
+        gameWrapper.className = "tictactoe-wrapper " + themes[t];
+      }
+      
+    });
+  </script>
+</body>
+</html>
