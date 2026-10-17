@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>PDF Editor Automation | Sumit Sharma Tools</title>
   <meta name="description" content="All-in-One PDF & Image Automation Tool Pro for watermarking, headers, footers, and links.">
-  <link rel="canonical" href="https://thesumitsharma.in/tools/pdf-editor-automation/app.html">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="PDF Editor Automation | Sumit Sharma Tools">
-  <meta property="og:description" content="All-in-One PDF & Image Automation Tool Pro for watermarking, headers, footers, and links.">
-  <meta property="og:url" content="https://thesumitsharma.in/tools/pdf-editor-automation/app.html">
+  <link rel="canonical" href="https://thesumitsharma.in/tools/pdf-editor-automation/app.html"><meta property="og:type" content="website"><meta property="og:title" content="PDF Editor Automation starter workspace | Sumit Sharma Tools"><meta property="og:description" content="Nonfunctional starter workspace for PDF Editor Automation; explains the implementation still required."><meta property="og:url" content="https://thesumitsharma.in/tools/pdf-editor-automation/app.html">
   <meta name="theme-color" content="#f7f5ef">
   <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
   <link rel="stylesheet" href="../../assets/site.css">
@@ -240,13 +236,13 @@
     }
     .pdf-tool-wrapper .download-btn:hover { background: #059669; }
 
-    /* EDGE BUTTONS (BACK & FULLSCREEN) */
+    /* EDGE BUTTONS (EXTRA SMALL SIZE CONFIGURATION) */
     .pdf-tool-wrapper .edge-buttons {
         position: absolute;
-        bottom: 24px;
-        right: 24px;
+        bottom: 16px;
+        right: 16px;
         display: flex;
-        gap: 10px;
+        gap: 6px;
         z-index: 200;
     }
 
@@ -254,18 +250,17 @@
         background: var(--tab-bg);
         border: 1px solid var(--border-color);
         color: var(--text-color);
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
+        width: 30px;  /* Extra small width */
+        height: 30px; /* Extra small height */
+        border-radius: 6px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
+        font-size: 14px; /* Smaller icon size */
         transition: 0.2s;
-        backdrop-filter: blur(5px);
         font-weight: bold;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     
     .pdf-tool-wrapper .edge-btn:hover { 
@@ -279,8 +274,8 @@
       .pdf-tool-wrapper .download-item { flex-direction: column; align-items: stretch; text-align: center; }
       .pdf-tool-wrapper .download-btn { width: 100%; }
       .pdf-tool-wrapper .edge-buttons {
-        bottom: 16px;
-        right: 16px;
+        bottom: 12px;
+        right: 12px;
       }
     }
   </style>
@@ -317,7 +312,7 @@
     <section class="pdf-tool-wrapper" id="pdfToolWrapper" data-theme="light">
       <div class="pdf-tool-container">
         
-        <!-- Edge Buttons for Fullscreen & Refresh at bottom right of the tool -->
+        <!-- Edge Buttons for Fullscreen & Refresh (Extra Small) -->
         <div class="edge-buttons">
           <button class="edge-btn" id="btnRefresh" title="Refresh">↻</button>
           <button class="edge-btn" id="btnFullscreen" title="Toggle Fullscreen">⛶</button>
@@ -484,7 +479,6 @@
 
       const btnRefresh = document.getElementById("btnRefresh");
       btnRefresh.addEventListener("click", () => {
-         // reset the form inputs and state
          document.getElementById('pdfFiles').value = '';
          document.getElementById('imageFiles').value = '';
          document.getElementById('pdfMsg').innerHTML = '📁 Tap ya Browse karke PDF select karein';
@@ -495,10 +489,284 @@
          document.getElementById('progressContainer').style.display = 'none';
       });
 
-
       function switchMode(mode) {
         currentMode = mode;
         tabType1.classList.toggle('active', mode === 'type1');
         tabType2.classList.toggle('active', mode === 'type2');
         document.getElementById('pdfInputGroup').style.display = mode === 'type1' ? 'block' : 'none';
- 
+        document.getElementById('imageInputGroup').style.display = mode === 'type2' ? 'block' : 'none';
+        document.getElementById('status').innerText = '';
+        document.getElementById('progressContainer').style.display = 'none';
+      }
+
+      function switchWatermark(variant) {
+        watermarkVariant = variant;
+        tabMark1.classList.toggle('active', variant === '1mark');
+        tabMark3.classList.toggle('active', variant === '3mark');
+      }
+
+      function updateProgress(percent, label) {
+        const container = document.getElementById('progressContainer');
+        container.style.display = 'block';
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressPercent').innerText = percent + '%';
+        document.getElementById('progressText').innerText = label;
+      }
+
+      function applyMarkupToPages(pdfDoc, font, header, footer, watermark, url, variant) {
+        const { rgb, degrees } = PDFLib;
+        const pages = pdfDoc.getPages();
+
+        for (let page of pages) {
+          const { width, height } = page.getSize();
+
+          const addLinkAnnotation = (rectCoords, targetUri) => {
+            const linkAnnot = pdfDoc.context.obj({
+              Type: 'Annot', Subtype: 'Link', Rect: rectCoords, Border: [0, 0, 0],
+              A: { Type: 'Action', S: 'URI', URI: PDFLib.PDFString.of(targetUri) }
+            });
+            const linkAnnotRef = pdfDoc.context.register(linkAnnot);
+            let annots = page.node.Annots();
+            if (!annots) {
+              page.node.set(PDFLib.PDFName.of('Annots'), pdfDoc.context.obj([linkAnnotRef]));
+            } else {
+              annots.push(linkAnnotRef);
+            }
+          };
+
+          if (watermark) {
+            const wmSize = Math.min(width, height) / 17;
+            const textWidth = font.widthOfTextAtSize(watermark, wmSize);
+            const angleRad = (35 * Math.PI) / 180;
+            const centerX = (width - textWidth * Math.cos(angleRad)) / 2;
+            const shiftUpPts = 50;
+
+            if (variant === '1mark') {
+              const baseY = height * 0.45 + shiftUpPts;
+              const startY = baseY - (textWidth * Math.sin(angleRad)) / 2;
+              page.drawText(watermark, { x: centerX, y: startY, size: wmSize, font: font, color: rgb(0.45, 0.45, 0.45), rotate: degrees(35), opacity: 0.30 });
+            } else {
+              const positionsY = [height * 0.72 + shiftUpPts, height * 0.45 + shiftUpPts, height * 0.18 + shiftUpPts];
+              for (let baseY of positionsY) {
+                const startY = baseY - (textWidth * Math.sin(angleRad)) / 2;
+                page.drawText(watermark, { x: centerX, y: startY, size: wmSize, font: font, color: rgb(0.45, 0.45, 0.45), rotate: degrees(35), opacity: 0.30 });
+              }
+            }
+          }
+
+          if (header) {
+            const hSize = 10;
+            const hWidth = font.widthOfTextAtSize(header, hSize);
+            const hX = (width - hWidth) / 2;
+            const hY = height - 25;
+            page.drawText(header, { x: hX, y: hY, size: hSize, font: font, color: rgb(0.0, 0.2, 0.8) });
+            page.drawLine({ start: { x: hX, y: hY - 3 }, end: { x: hX + hWidth, y: hY - 3 }, thickness: 1, color: rgb(0.9, 0.1, 0.1) });
+            if (url) addLinkAnnotation([0, height - 142, width, height], url);
+          }
+
+          if (footer) {
+            const fSize = 10;
+            const fWidth = font.widthOfTextAtSize(footer, fSize);
+            const fX = (width - fWidth) / 2;
+            const fY = 22;
+            page.drawText(footer, { x: fX, y: fY, size: fSize, font: font, color: rgb(0.0, 0.2, 0.8) });
+            page.drawLine({ start: { x: fX, y: fY - 3 }, end: { x: fX + fWidth, y: fY - 3 }, thickness: 1, color: rgb(0.0, 0.2, 0.8) });
+            if (url) addLinkAnnotation([0, 0, width, 142], url);
+          }
+        }
+      }
+
+      function loadImageAsJpegBytes(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = img.width; canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0);
+              canvas.toBlob(async (blob) => {
+                if (!blob) return reject(new Error('Image conversion failed'));
+                resolve(await blob.arrayBuffer());
+              }, 'image/jpeg', 0.92);
+            };
+            img.onerror = () => reject(new Error('Image load error: ' + file.name));
+            img.src = e.target.result;
+          };
+          reader.onerror = () => reject(new Error('File read error'));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function handleProcess() {
+        if (typeof PDFLib === 'undefined') {
+          alert('PDF Library load nahi hui hai! Kripya apna Internet connection check karein ya page refresh karein.');
+          return;
+        }
+        if (currentMode === 'type1') {
+          await processPDFs();
+        } else {
+          await processImagesToPDF();
+        }
+      }
+
+      async function processPDFs() {
+        const fileInput = document.getElementById('pdfFiles');
+        const statusDiv = document.getElementById('status');
+        const downloadsContainer = document.getElementById('downloadsContainer');
+        const fileList = document.getElementById('fileList');
+
+        if (!fileInput.files.length) {
+          statusDiv.className = 'error';
+          statusDiv.innerText = '⚠️ Kripya pehle kam se kam ek PDF file select karein!';
+          return;
+        }
+
+        const header = document.getElementById('headerText').value.trim();
+        const footer = document.getElementById('footerText').value.trim();
+        const watermark = document.getElementById('watermarkText').value.trim();
+        const url = document.getElementById('redirectUrl').value.trim();
+
+        processBtn.disabled = true;
+        statusDiv.className = '';
+        downloadsContainer.innerHTML = '';
+
+        try {
+          const { PDFDocument, StandardFonts } = PDFLib;
+          const totalFiles = fileInput.files.length;
+
+          for (let i = 0; i < totalFiles; i++) {
+            let file = fileInput.files[i];
+            let percentBase = Math.floor((i / totalFiles) * 100);
+            updateProgress(percentBase, `Reading ${file.name}...`);
+
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+            updateProgress(percentBase + Math.floor(40 / totalFiles), `Applying Markup to ${file.name}...`);
+            applyMarkupToPages(pdfDoc, font, header, footer, watermark, url, watermarkVariant);
+
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const downloadUrl = URL.createObjectURL(blob);
+            const targetFileName = `edited_${file.name}`;
+
+            const item = document.createElement('div');
+            item.className = 'download-item';
+            item.innerHTML = `
+              <span class="file-name-span"><strong>${file.name}</strong></span>
+              <a href="${downloadUrl}" download="${targetFileName}" class="download-btn">⬇️ Download PDF</a>
+            `;
+            downloadsContainer.appendChild(item);
+
+            if (totalFiles === 1) {
+              const a = document.createElement('a');
+              a.href = downloadUrl; a.download = targetFileName; a.click();
+            }
+          }
+
+          updateProgress(100, 'Processing Complete!');
+          fileList.style.display = 'block';
+          statusDiv.className = 'success';
+          statusDiv.innerText = '🎉 Saari PDFs successfully process ho chuki hain!';
+        } catch (err) {
+          console.error(err);
+          statusDiv.className = 'error';
+          statusDiv.innerText = '❌ Kuch gadbad hui: ' + err.message;
+          document.getElementById('progressContainer').style.display = 'none';
+        } finally {
+          processBtn.disabled = false;
+        }
+      }
+
+      async function processImagesToPDF() {
+        const imageInput = document.getElementById('imageFiles');
+        const statusDiv = document.getElementById('status');
+        const downloadsContainer = document.getElementById('downloadsContainer');
+        const fileList = document.getElementById('fileList');
+
+        if (!imageInput.files.length) {
+          statusDiv.className = 'error';
+          statusDiv.innerText = '⚠️ Kripya pehle kam se kam ek Image select karein!';
+          return;
+        }
+
+        const header = document.getElementById('headerText').value.trim();
+        const footer = document.getElementById('footerText').value.trim();
+        const watermark = document.getElementById('watermarkText').value.trim();
+        const url = document.getElementById('redirectUrl').value.trim();
+        let outputName = document.getElementById('outputPdfName').value.trim() || 'Msbu_Study_Material.pdf';
+        if (!outputName.toLowerCase().endsWith('.pdf')) outputName += '.pdf';
+
+        processBtn.disabled = true;
+        statusDiv.className = '';
+        downloadsContainer.innerHTML = '<ctrl63>';
+
+        try {
+          const { PDFDocument, StandardFonts } = PDFLib;
+          const pdfDoc = await PDFDocument.create();
+          const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+          const A4_WIDTH = 595.28;
+          const A4_HEIGHT = 841.89;
+          const topBottomMargin = 40;
+          const sideMargin = 20;
+          const totalImgs = imageInput.files.length;
+
+          for (let i = 0; i < totalImgs; i++) {
+            let file = imageInput.files[i];
+            let percent = Math.floor(((i + 1) / totalImgs) * 70);
+            updateProgress(percent, `Converting Image ${i + 1} of ${totalImgs}...`);
+
+            const jpegBytes = await loadImageAsJpegBytes(file);
+            const embeddedImage = await pdfDoc.embedJpg(jpegBytes);
+
+            const page = pdfDoc.addPage([A4_WIDTH, A4_HEIGHT]);
+            const maxWidth = A4_WIDTH - sideMargin * 2;
+            const maxHeight = A4_HEIGHT - topBottomMargin * 2;
+            const imgDims = embeddedImage.scaleToFit(maxWidth, maxHeight);
+            const x = (A4_WIDTH - imgDims.width) / 2;
+            const y = (A4_HEIGHT - imgDims.height) / 2;
+
+            page.drawImage(embeddedImage, { x, y, width: imgDims.width, height: imgDims.height });
+          }
+
+          updateProgress(85, 'Applying Watermark, Header & Footer...');
+          applyMarkupToPages(pdfDoc, font, header, footer, watermark, url, watermarkVariant);
+
+          updateProgress(95, 'Generating PDF file...');
+          const pdfBytes = await pdfDoc.save();
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const downloadUrl = URL.createObjectURL(blob);
+
+          const item = document.createElement('div');
+          item.className = 'download-item';
+          item.innerHTML = `
+            <span class="file-name-span"><strong>${outputName}</strong> (${totalImgs} Pages)</span>
+            <a href="${downloadUrl}" download="${outputName}" class="download-btn">⬇️ Download PDF</a>
+          `;
+          downloadsContainer.appendChild(item);
+
+          const a = document.createElement('a');
+          a.href = downloadUrl; a.download = outputName; a.click();
+
+          updateProgress(100, 'Complete!');
+          fileList.style.display = 'block';
+          statusDiv.className = 'success';
+          statusDiv.innerText = '🎉 Images se PDF successfully ban gayi hai!';
+        } catch (err) {
+          console.error(err);
+          statusDiv.className = 'error';
+          statusDiv.innerText = '❌ Kuch gadbad hui: ' + err.message;
+          document.getElementById('progressContainer').style.display = 'none';
+        } finally {
+          processBtn.disabled = false;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
