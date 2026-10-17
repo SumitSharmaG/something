@@ -37,6 +37,7 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 100%;
+      position: relative; /* Added for fullscreen context */
     }
 
     .live-text-tool .tool-controls {
@@ -104,12 +105,41 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: space-between; /* Space between left/stats and right edge buttons */
       color: #94a3b8;
     }
 
     .live-text-tool .status-left { display: flex; align-items: center; gap: 8px; }
     .live-text-tool #dot { width: 8px; height: 8px; border-radius: 50%; background: #eab308; flex-shrink: 0; }
+    
+    .live-text-tool .stats-center { flex-grow: 1; text-align: center; }
+
+    /* EDGE BUTTONS (REFRESH & FULLSCREEN) */
+    .live-text-tool .edge-buttons {
+        display: flex;
+        gap: 6px;
+    }
+
+    .live-text-tool .edge-btn {
+        background: #334155;
+        border: 1px solid #475569;
+        color: #f8fafc;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: 0.2s;
+        padding: 0; /* Remove default padding */
+    }
+    
+    .live-text-tool .edge-btn:hover { 
+        background: #475569; 
+    }
 
     .live-text-tool textarea {
       flex: 1;
@@ -124,6 +154,12 @@
       resize: vertical;
       background: #0f172a;
       color: #f8fafc;
+    }
+    
+    /* When Fullscreen, textarea takes remaining height */
+    .live-text-tool:fullscreen textarea {
+        height: 100%;
+        resize: none;
     }
   </style>
 </head>
@@ -156,7 +192,7 @@
     </section>
 
     <!-- The actual Tool UI -->
-    <section class="live-text-tool" aria-label="Live Text Projector Tool">
+    <section class="live-text-tool" id="liveTextTool" aria-label="Live Text Projector Tool">
       <div class="tool-controls">
         <div class="group">
           <label>Port:</label>
@@ -187,7 +223,14 @@
           <span id="dot"></span>
           <span id="statusText">Connecting...</span>
         </div>
-        <div id="statsText">0 chars | 0 words</div>
+        
+        <div class="stats-center" id="statsText">0 chars | 0 words</div>
+        
+        <!-- Fullscreen and Refresh Edge Buttons in Status Bar -->
+        <div class="edge-buttons">
+          <button class="edge-btn" id="btnRefresh" title="Refresh Connection">↻</button>
+          <button class="edge-btn" id="btnFullscreen" title="Toggle Fullscreen">⛶</button>
+        </div>
       </div>
 
       <textarea id="text" placeholder="Type or paste text..."></textarea>
@@ -229,6 +272,11 @@
     const customPort = document.getElementById("customPort");
     const userLimit = document.getElementById("userLimit");
     const connectBtn = document.getElementById("connectBtn");
+    
+    // New UI Elements
+    const liveTextTool = document.getElementById("liveTextTool");
+    const btnFullscreen = document.getElementById("btnFullscreen");
+    const btnRefresh = document.getElementById("btnRefresh");
 
     const peers = {}; // Map of targetId -> { pc, channel }
     let typingTimer = null;
@@ -420,8 +468,8 @@
       if (portSelect.value === "custom") customPort.focus();
     });
 
-    // Apply Settings Button
-    connectBtn.addEventListener("click", () => {
+    // Apply Settings Button (Reusable Logic)
+    function applySettings() {
       const target = portSelect.value === "custom" ? customPort.value.trim() : portSelect.value;
       if (!target) return alert("Valid port required");
 
@@ -432,6 +480,36 @@
       activePort = target;
       maxUsers = parseInt(userLimit.value) || 2;
       joinPort();
+    }
+    connectBtn.addEventListener("click", applySettings);
+    
+    // Refresh Button Logic
+    btnRefresh.addEventListener("click", () => {
+      // Trigger a reconnect visually
+      dot.style.background = "#eab308";
+      statusText.textContent = "Refreshing connection...";
+      setTimeout(applySettings, 500); 
+    });
+
+    // Fullscreen Logic
+    btnFullscreen.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        if (liveTextTool.requestFullscreen) {
+          liveTextTool.requestFullscreen();
+        } else if (liveTextTool.webkitRequestFullscreen) { /* Safari */
+          liveTextTool.webkitRequestFullscreen();
+        } else if (liveTextTool.msRequestFullscreen) { /* IE11 */
+          liveTextTool.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+          document.msExitFullscreen();
+        }
+      }
     });
 
     // Clipboard Actions
@@ -459,5 +537,4 @@
     });
   </script>
 </body>
-  </html>
-  
+</html>
