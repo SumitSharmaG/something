@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSBU Exam Portal — Form Finder</title>
+    <style>
+        :root {
+            --primary-maroon: #800020;
+            --dark-maroon: #5c0017;
+            --bg-light: #fdfafb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+        }
+
+        /* Header UI */
+        .university-header {
+            width: 100%;
+            background-color: #ffffff;
+            text-align: center;
+            padding: 15px 10px;
+            border-bottom: 3px solid var(--primary-maroon);
+        }
+
+        .university-header h1 {
+            color: #000;
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .university-header p {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .top-banner {
+            width: 100%;
+            background-color: var(--primary-maroon);
+            color: #ffffff;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        /* Main Form Container */
+        .main-container {
+            width: 95%;
+            max-width: 750px;
+            margin: 20px auto;
+            background: #fff;
+            border: 2px solid var(--primary-maroon);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background-color: var(--primary-maroon);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .search-mode-select {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        select, input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary-maroon);
+            outline: none;
+        }
+
+        .field-group {
+            display: none;
+        }
+
+        .field-group.active {
+            display: block;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-maroon);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--dark-maroon);
+        }
+
+        /* Custom Table Overlay Styling */
+        .result-section {
+            width: 95%;
+            max-width: 750px;
+            margin: 10px auto 30px;
+        }
+
+        .result-title {
+            color: var(--primary-maroon);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .custom-table-wrapper {
+            border: 2px solid var(--primary-maroon);
+            border-radius: 6px;
+            background: #ffffff;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .table-overlay-header {
+            background-color: var(--primary-maroon);
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .status-badge {
+            background: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .iframe-container {
+            padding: 15px;
+            min-height: 250px;
+            background: #fafafa;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            height: 380px;
+            border: 1px dashed var(--primary-maroon);
+            border-radius: 4px;
+            background: #ffffff;
+        }
+
+        .table-overlay-footer {
+            background-color: #f1f1f1;
+            border-top: 1px solid #ddd;
+            padding: 8px 15px;
+            text-align: right;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: var(--primary-maroon);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            .university-header h1 {
+                font-size: 1.05rem;
+            }
+            .card-body {
+                padding: 15px;
+            }
+            .table-overlay-header {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="university-header">
+        <h1>Maharaja Surajmal Brij University, Bharatpur</h1>
+        <p>Bharatpur, Rajasthan 321201</p>
+    </div>
+    
+    <div class="top-banner">
+        🎓 ONLINE EXAMINATION HELP — FORM FINDER BOT
+    </div>
+
+    <div class="main-container">
+        <div class="card-header">Search Options</div>
+        <div class="card-body">
+            
+            <form id="searchForm" action="https://database.msbu-university-details-finder.workers.dev/" method="POST" target="resultEngineFrame" onsubmit="handleSearchSubmit()">
+                
+                <div class="search-mode-select">
+                    <label for="searchType">Apna Record Dhundhne Ka Tarika Chune:</label>
+                    <select id="searchType" onchange="switchSearchMode(this.value)">
+                        <option value="name_father">Student Name + Father Name</option>
+                        <option value="name_mother">Student Name + Mother Name</option>
+                        <option value="name_only">Student Name Only</option>
+                        <option value="mobile">📱 Mobile Number</option>
+                        <option value="aadhar">🪪 Aadhar Number</option>
+                        <option value="abc_id">🎓 ABC ID</option>
+                    </select>
+                </div>
+
+                <div id="group_sname" class="field-group active">
+                    <label>Student Name:</label>
+                    <input type="text" id="input_Sname" name="Sname" placeholder="Enter Student Name">
+                </div>
+
+                <div id="group_fname" class="field-group active">
+                    <label>Father Name:</label>
+                    <input type="text" id="input_Fname" name="Fname" placeholder="Enter Father Name">
+                </div>
+
+                <div id="group_mname" class="field-group">
+                    <label>Mother Name:</label>
+                    <input type="text" id="input_Mname" name="Mname" placeholder="Enter Mother Name">
+                </div>
+
+                <div id="group_mob" class="field-group">
+                    <label>Mobile Number:</label>
+                    <input type="tel" id="input_Mob" name="Mob" placeholder="Enter 10-digit Mobile Number">
+                </div>
+
+                <div id="group_uid" class="field-group">
+                    <label>ID Number:</label>
+                    <input type="text" id="input_uid" name="uid" placeholder="Enter ID Number">
+                </div>
+
+                <div id="group_abc" class="field-group">
+                    <label>ABC ID:</label>
+                    <input type="text" id="input_abc" name="abc" placeholder="Enter ABC ID">
+                </div>
+
+                <input type="hidden" name="finfom" value="Proceed">
+
+                <div class="btn-container">
+                    <button type="submit" class="btn-submit">Search Result</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Output Section with Custom Overlay Table Layout -->
+    <div class="result-section">
+        <div class="result-title">📋 Result Match Data:</div>
+        
+        <div class="custom-table-wrapper">
+            <div class="table-overlay-header">
+                <span>📊 MSBU STUDENT RECORD VERIFICATION</span>
+                <span class="status-badge" id="statusBadge">READY</span>
+            </div>
+
+            <div class="iframe-container" id="iframeBox">
+                <iframe name="resultEngineFrame" id="resultEngineFrame" src="about:blank" onload="onResponseLoaded()"></iframe>
+            </div>
+
+            <div class="table-overlay-footer">
+                <small>Not A Official Database Verification System | MSBU Portal...Hehehe😁</small>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+       🕸️ Site Design & Developed By DEVELOPER - ISMIT SHARMA :) | Copyright © All Rights Reserved 😉😅
+    </footer>
+
+    <script>
+        let isInitialLoad = true;
+
+        function switchSearchMode(mode) {
+            const fields = ['Sname', 'Fname', 'Mname', 'Mob', 'uid', 'abc'];
+            fields.forEach(f => {
+                document.getElementById('input_' + f).value = '';
+                document.getElementById('group_' + f.toLowerCase()).classList.remove('active');
+            });
+
+            if (mode === 'name_father') {
+                showField('sname');
+                showField('fname');
+            } else if (mode === 'name_mother') {
+                showField('sname');
+                showField('mname');
+            } else if (mode === 'name_only') {
+                showField('sname');
+            } else if (mode === 'mobile') {
+                showField('mob');
+            } else if (mode === 'aadhar') {
+                showField('uid');
+            } else if (mode === 'abc_id') {
+                showField('abc');
+            }
+        }
+
+        function showField(id) {
+            document.getElementById('group_' + id).classList.add('active');
+        }
+
+        function handleSearchSubmit() {
+            const badge = document.getElementById('statusBadge');
+            badge.innerText = 'SEARCHING...';
+            badge.style.backgroundColor = '#ffc107';
+            badge.style.color = '#000';
+            isInitialLoad = false;
+        }
+
+        function onResponseLoaded() {
+            if (isInitialLoad) return;
+
+            const badge = document.getElementById('statusBadge');
+            badge.innerText = 'FETCHED';
+            badge.style.backgroundColor = '#28a745';
+            badge.style.color = '#fff';
+
+            // Automatic visual scroll to output box
+            document.querySelector('.result-section').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+  </html>
+  
